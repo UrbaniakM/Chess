@@ -13,4 +13,8 @@ import boards.ChessBoard;
  */
 public class Chess {
     protected ChessBoard chessBoard = new ChessBoard();
+    
+    public Chess(){
+        chessBoard.printBoard();
+    }
 }

@@ -24,12 +24,18 @@ public class ChessBoard extends Board {
     
     @Override
     protected void fillBoard(){
-        
-        for(int i = 0; i < 8; i++){
-            whitePieces[i] = new Pawn("white");
-            whitePieces[i].setPosition(1,i);
-            blackPieces[i] = new Pawn("black");
-            blackPieces[i].setPosition(7,i);
+        for(int row = 0; row < height; row++){
+            for(int col = 0; col < width; col++){
+                boardMatrix[row][col] = null;
+            }
+        }
+        for(int col = 0; col < width; col++){
+            whitePieces[col] = new Pawn("white");
+            whitePieces[col].setPosition(1,col);
+            blackPieces[col] = new Pawn("black");
+            blackPieces[col].setPosition(7,col);
+            boardMatrix[1][col] = whitePieces[col];
+            boardMatrix[6][col] = blackPieces[col];
         }
     }
 

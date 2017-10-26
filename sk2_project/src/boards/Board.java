@@ -5,22 +5,38 @@
  */
 package boards;
 
+import figures.Figure;
+
 /**
  *
  * @author mateusz
  */
 public abstract class Board {
     final protected int width, height;
-    protected Byte[][] boardMatrix; // MOZE DAC TUTAJ MACIERZ FIGUR A NIE BYTE?
+    protected Figure[][] boardMatrix;
     
     public Board(int width, int height){
         this.width = width;
         this.height = height;
-        boardMatrix = new Byte[width][height];
+        boardMatrix = new Figure[width][height];
         fillBoard();
     }
     
     abstract protected void fillBoard();
     
+    
+    public void printBoard(){
+        for(int row = 0; row < width; row++){
+            for(int col = 0; col < height; col++){
+                if(boardMatrix[row][col] == null){
+                    System.out.print("0");
+                }
+                else {
+                    System.out.print(boardMatrix[row][col].symbol);
+                }
+            }
+            System.out.println("");
+        }
+    }
     
 }

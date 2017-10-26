@@ -5,6 +5,7 @@
  */
 package game_platform;
 
+import game_engines.Chess;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -45,6 +46,7 @@ public class Game_platform extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Chess test = new Chess();
         launch(args);
     }
     

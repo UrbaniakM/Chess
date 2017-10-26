@@ -10,15 +10,18 @@ package figures;
  * @author mateusz
  */
 public abstract class Figure {
-    public String figureName;
+    protected String figureName;
     protected Boolean isBeaten = false;
     protected String figureColour;
     protected int xPosition, yPosition;
-    protected char symbol;// TEST
+    public char symbol;// TEST
     
     public Figure(String name, String colour){
         this.figureColour = colour;
         this.figureName = name;
+        if(name == "pawn"){
+            this.symbol = 'p';
+        }
     }
     
     public void beatFigure(){
