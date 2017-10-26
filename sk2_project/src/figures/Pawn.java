@@ -10,5 +10,13 @@ package figures;
  * @author mateusz
  */
 public class Pawn extends Figure {
+
+    public Pawn(String colour){
+        super("pawn", colour);
+    }
     
+    @Override
+    public boolean isMoveAllowed(){
+        return true;
+    } 
 }

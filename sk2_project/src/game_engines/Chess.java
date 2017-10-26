@@ -5,10 +5,12 @@
  */
 package game_engines;
 
+import boards.ChessBoard;
+
 /**
  *
  * @author mateusz
  */
 public class Chess {
-    
+    protected ChessBoard chessBoard = new ChessBoard();
 }

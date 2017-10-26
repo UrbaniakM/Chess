@@ -10,10 +10,10 @@ package boards;
  * @author mateusz
  */
 public abstract class Board {
-    protected int width, height;
-    protected Byte[][] boardMatrix;
+    final protected int width, height;
+    protected Byte[][] boardMatrix; // MOZE DAC TUTAJ MACIERZ FIGUR A NIE BYTE?
     
-    Board(int width, int height){
+    public Board(int width, int height){
         this.width = width;
         this.height = height;
         boardMatrix = new Byte[width][height];

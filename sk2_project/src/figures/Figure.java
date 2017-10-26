@@ -10,15 +10,25 @@ package figures;
  * @author mateusz
  */
 public abstract class Figure {
-    String figureName;
-    Boolean isBeaten = false;
-    String figureColour;
+    public String figureName;
+    protected Boolean isBeaten = false;
+    protected String figureColour;
+    protected int xPosition, yPosition;
+    protected char symbol;// TEST
     
-    Figure(String colour, String name){
+    public Figure(String name, String colour){
         this.figureColour = colour;
         this.figureName = name;
     }
     
-    abstract public void beatFigure();
-    abstract public boolean moveFigure();
+    public void beatFigure(){
+        isBeaten = true;
+    }
+    
+    public void setPosition(int x, int y){
+        xPosition = x;
+        yPosition = y;
+    }
+    
+    abstract public boolean isMoveAllowed();
 }

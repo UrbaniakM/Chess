@@ -11,4 +11,12 @@ package figures;
  */
 public class Queen extends Figure {
     
+    public Queen(String colour){
+        super("queen", colour);
+    }
+    
+    @Override
+    public boolean isMoveAllowed(){
+        return true;
+    } 
 }

@@ -11,4 +11,12 @@ package figures;
  */
 public class Bishop extends Figure {
     
+    public Bishop(String colour){
+        super("bishop", colour);
+    }
+    
+    @Override
+    public boolean isMoveAllowed(){
+        return true;
+    } 
 }
