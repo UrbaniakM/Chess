@@ -12,11 +12,15 @@ package figures;
 public class Pawn extends Figure {
 
     public Pawn(String colour){
-        super("pawn", colour);
+        super("pawn",colour);
     }
     
     @Override
-    public boolean isMoveAllowed(){
+    public boolean isMoveAllowed(int newX, int newY){
         return true;
     } 
+    
+    public boolean isBeatingAllowed(int newX, int newY){
+        return true;
+    }
 }

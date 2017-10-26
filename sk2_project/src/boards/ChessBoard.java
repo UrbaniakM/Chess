@@ -20,6 +20,7 @@ public class ChessBoard extends Board {
         super(8,8);
         whitePieces = new Figure[16];
         blackPieces = new Figure[16];
+        fillBoard();
     }
     
     @Override

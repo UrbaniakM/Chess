@@ -19,7 +19,6 @@ public abstract class Board {
         this.width = width;
         this.height = height;
         boardMatrix = new Figure[width][height];
-        fillBoard();
     }
     
     abstract protected void fillBoard();
