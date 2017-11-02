@@ -15,6 +15,8 @@ public abstract class Figure {
     protected String figureColour;
     protected int xPosition, yPosition;
     public char symbol;// TEST
+    protected int startingX, startingY;
+    protected int numberOfMoves = 0;
     
     public Figure(String name, String colour){
         this.figureColour = colour;
@@ -31,7 +33,16 @@ public abstract class Figure {
     public void setPosition(int x, int y){
         xPosition = x;
         yPosition = y;
+        if(numberOfMoves == 0){
+            startingX = x;
+            startingY = y;
+        }
+        numberOfMoves++;
     }
     
-    abstract public boolean isMoveAllowed();
+    abstract public boolean isMoveAllowed(int newX, int newY);
+    
+    public String getColour(){
+        return figureColour;
+    }
 }
