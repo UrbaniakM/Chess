@@ -27,6 +27,10 @@ public abstract class Board {
         return boardMatrix[x][y];
     }
     
+    public void setFigure(Figure fig, int x, int y){
+        boardMatrix[x][y] = fig;
+    }
+    
     public int getWidth(){
         return this.width;
     }

@@ -30,11 +30,9 @@ public class Pawn extends Figure {
             return false;
         }
         else if((yPosition == 6) && (newY == 4)){
-            yPosition = newY;
             return true;
         }
         else if((yPosition == 1) && (newY == 3)){
-            yPosition = newY;
             return true;
         }
         else if((startingY == 6) && (newY != (yPosition - 1))){
@@ -43,7 +41,6 @@ public class Pawn extends Figure {
         else if((startingY == 1) && (newY != (yPosition + 1))){
             return false;
         }
-        yPosition = newY;
         return true;
     } 
     

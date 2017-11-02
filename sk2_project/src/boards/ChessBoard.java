@@ -23,12 +23,12 @@ public class ChessBoard extends Board {
     
     public ChessBoard(){
         super(8,8);
-        whitePieces = new Figure[16];
-        blackPieces = new Figure[16];
+        /*whitePieces = new Figure[16];
+        blackPieces = new Figure[16];*/
         fillBoard();
     }
     
-    @Override
+    /*@Override
     protected void fillBoard(){
         for(int row = 0; row < height; row++){
             for(int col = 0; col < width; col++){
@@ -36,10 +36,8 @@ public class ChessBoard extends Board {
             }
         }
         for(int col = 0; col < width; col++){
-            whitePieces[col] = new Pawn("white");
-            whitePieces[col].setPosition(1,col);
-            blackPieces[col] = new Pawn("black");
-            blackPieces[col].setPosition(6,col);
+            whitePieces[col] = new Pawn("white",6,col);
+            blackPieces[col] = new Pawn("black",1,col);
             boardMatrix[1][col] = blackPieces[col];
             boardMatrix[6][col] = whitePieces[col];
         }
@@ -80,6 +78,38 @@ public class ChessBoard extends Board {
         boardMatrix[7][4] = whitePieces[15];
         blackPieces[15] = new King("black", 0,4);
         boardMatrix[0][4] = blackPieces[15];
+    }*/
+    @Override
+    protected void fillBoard(){
+        for(int row = 0; row < height; row++){
+            for(int col = 0; col < width; col++){
+                boardMatrix[row][col] = null;
+            }
+        }
+        for(int col = 0; col < width; col++){
+            boardMatrix[1][col] = new Pawn("black",1,col);
+            boardMatrix[6][col] = new Pawn("white",6,col);
+        }
+        // rooks
+        boardMatrix[7][0] = new Rook("white", 7, 0);
+        boardMatrix[7][7] = new Rook("white", 7, 7);
+        boardMatrix[0][0] = new Rook("black",0,0);
+        boardMatrix[0][7] = new Rook("black",0,7);
+        // knights
+        boardMatrix[7][1] = new Knight("white", 7,1);
+        boardMatrix[7][6] = new Knight("white", 7,6);
+        boardMatrix[0][1] = new Knight("black", 0,1);
+        boardMatrix[0][6] = new Knight("black", 0,6);
+        // bishops
+        boardMatrix[7][2] = new Bishop("white", 7,2);
+        boardMatrix[7][5] = new Bishop("white", 7,5);
+        boardMatrix[0][2] = new Bishop("black", 0,2);
+        boardMatrix[0][5] = new Bishop("black", 0,5);
+        // queens
+        boardMatrix[7][3] = new Queen("white", 7,3);
+        boardMatrix[0][3] = new Queen("black", 0,3);
+        // kings
+        boardMatrix[7][4] = new King("white", 7,4);
+        boardMatrix[0][4] = new King("black", 0,4);
     }
-
 }

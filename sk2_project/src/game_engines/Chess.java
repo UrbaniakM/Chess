@@ -7,6 +7,7 @@ package game_engines;
 
 import boards.ChessBoard;
 import figures.ChessPiece;
+import static figures.ChessPiece.PAWN;
 import figures.Figure;
 
 import javafx.application.Application;
@@ -69,8 +70,32 @@ public class Chess extends Application{
         return root;
     }
     
+    private int calculatePosition(double pixel){
+        return (int)(pixel + TILE_SIZE / 2) / TILE_SIZE;
+    }
+    
+    private boolean tryMove(Piece piece, int newX, int newY){
+        if(piece.getPieceType() != PAWN) {
+            if(piece.getFigure().isMoveAllowed(newX, newY)){
+                piece.getFigure().setPosition(newX,newY);
+                chessBoard.setFigure(piece.getFigure(),newX,newY);
+            }
+        }
+        else {
+            return false;
+        }
+        return false;
+    }
+    
     public Piece makePiece(Figure fig, int y, int x){
             Piece piece = new Piece(fig,y,x);
+            
+            piece.setOnMouseReleased(e -> {
+                int newX = calculatePosition(piece.getLayoutX());
+                int newY = calculatePosition(piece.getLayoutY());
+                tryMove(piece, newX, newY); // if wrong move then player has another try - check if tryMove == false
+            });
+            
             return piece;
         }
     
@@ -81,6 +106,19 @@ public class Chess extends Application{
         private Color symbolColor;
         private Figure figure;
         
+        public void movePiece(int newX, int newY){
+            this.x = newX;
+            this.y = newY;
+            figure.setPosition(newX, newY);
+        }
+        
+        public Figure getFigure(){
+            return this.figure;
+        }
+        
+        public ChessPiece getPieceType(){
+            return this.pieceType;
+        }
         
         public Piece(Figure fig, int y, int x){
             this.x = x;
@@ -100,8 +138,8 @@ public class Chess extends Application{
             Text pieceSymbol = new Text(figure.getFigureSymbol());
             pieceSymbol.setFont(new Font(SYMBOL_SIZE));
             pieceSymbol.setFill(symbolColor);
-            pieceSymbol.setTranslateX(TILE_SIZE / 5.5);
-            pieceSymbol.setTranslateY(TILE_SIZE / 5.5);
+            pieceSymbol.setTranslateX(TILE_SIZE / 5.5); // center the piece's symbol
+            pieceSymbol.setTranslateY(TILE_SIZE / 5.5); // center the piece's symbol
 
             getChildren().addAll(pieceBackground, pieceSymbol);  
         }
