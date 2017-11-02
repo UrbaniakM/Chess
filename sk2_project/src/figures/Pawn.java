@@ -18,6 +18,12 @@ public class Pawn extends Figure {
         figureSymbol = "\u2659";
     }
     
+    public Pawn(String colour, int x, int y){
+        super("pawn",colour,x,y);
+        pieceType = PAWN;
+        figureSymbol = "\u2659";
+    }
+    
     @Override
     public boolean isMoveAllowed(int newX, int newY){
         if(newX != xPosition){

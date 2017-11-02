@@ -16,7 +16,13 @@ public class Knight extends Figure {
     public Knight(String colour){
         super("knight", colour);
         pieceType = KNIGHT;
-        figureSymbol = "\u2658 ";
+        figureSymbol = "\u2658";
+    }
+    
+    public Knight(String colour, int x, int y){
+        super("knight", colour, x, y);
+        pieceType = KNIGHT;
+        figureSymbol = "\u2658";
     }
     
     @Override

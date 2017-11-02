@@ -19,6 +19,12 @@ public class Queen extends Figure {
         figureSymbol = "\u2655";
     }
     
+    public Queen(String colour, int x, int y){
+        super("queen", colour, x, y);
+        pieceType = QUEEN;
+        figureSymbol = "\u2655";
+    }
+    
     @Override
     public boolean isMoveAllowed(int newX, int newY){
         return true;

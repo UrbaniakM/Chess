@@ -19,6 +19,12 @@ public class Bishop extends Figure {
         figureSymbol = "\u2657";
     }
     
+    public Bishop(String colour, int x, int y){
+        super("bishop", colour, x,y);
+        pieceType = BISHOP;
+        figureSymbol = "\u2657";
+    }
+    
     @Override
     public boolean isMoveAllowed(int newX, int newY){
         return true;

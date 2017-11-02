@@ -15,13 +15,21 @@ public abstract class Figure {
     protected String figureColour;
     protected int xPosition, yPosition;
     protected int startingX, startingY;
-    protected int numberOfMoves = 0;
+    protected int numberOfMoves = -1;
     protected ChessPiece pieceType;
     protected String figureSymbol;
     
     public Figure(String name, String colour){
         this.figureColour = colour;
         this.figureName = name;
+    }
+    
+    public Figure(String name, String colour, int x, int y){
+        this.figureColour = colour;
+        this.figureName = name;
+        this.startingX = x;
+        this.startingY = y;
+        this.numberOfMoves = 0;
     }
     
     public void beatFigure(){
@@ -31,7 +39,7 @@ public abstract class Figure {
     public void setPosition(int x, int y){
         xPosition = x;
         yPosition = y;
-        if(numberOfMoves == 0){
+        if(numberOfMoves == -1){
             startingX = x;
             startingY = y;
         }

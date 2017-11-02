@@ -19,6 +19,12 @@ public class Rook extends Figure {
         figureSymbol = "\u2656";
     }
     
+    public Rook(String colour, int x, int y){
+        super("rook", colour,x,y);
+        pieceType = ROOK;
+        figureSymbol = "\u2656";
+    }
+    
     @Override
     public boolean isMoveAllowed(int newX, int newY){
         return true;

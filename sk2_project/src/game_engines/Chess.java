@@ -101,7 +101,7 @@ public class Chess extends Application{
             pieceSymbol.setFont(new Font(SYMBOL_SIZE));
             pieceSymbol.setFill(symbolColor);
             pieceSymbol.setTranslateX(TILE_SIZE / 5.5);
-            pieceSymbol.setTranslateY(TILE_SIZE / 6);
+            pieceSymbol.setTranslateY(TILE_SIZE / 5.5);
 
             getChildren().addAll(pieceBackground, pieceSymbol);  
         }
