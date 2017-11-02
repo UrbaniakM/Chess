@@ -35,8 +35,8 @@ public class ChessBoard extends Board {
             whitePieces[col].setPosition(1,col);
             blackPieces[col] = new Pawn("black");
             blackPieces[col].setPosition(7,col);
-            boardMatrix[1][col] = whitePieces[col];
-            boardMatrix[6][col] = blackPieces[col];
+            boardMatrix[1][col] = blackPieces[col];
+            boardMatrix[6][col] = whitePieces[col];
         }
     }
 

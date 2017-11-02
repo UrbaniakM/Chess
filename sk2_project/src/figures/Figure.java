@@ -17,13 +17,11 @@ public abstract class Figure {
     public char symbol;// TEST
     protected int startingX, startingY;
     protected int numberOfMoves = 0;
+    protected ChessPiece pieceType;
     
     public Figure(String name, String colour){
         this.figureColour = colour;
         this.figureName = name;
-        if(name == "pawn"){
-            this.symbol = 'p';
-        }
     }
     
     public void beatFigure(){
@@ -44,5 +42,9 @@ public abstract class Figure {
     
     public String getColour(){
         return figureColour;
+    }
+    
+    public ChessPiece getPieceType(){
+        return this.pieceType;
     }
 }

@@ -23,6 +23,9 @@ public abstract class Board {
     
     abstract protected void fillBoard();
     
+    public Figure getFigure(int x, int y){
+        return boardMatrix[x][y];
+    }
     
     public void printBoard(){
         for(int row = 0; row < width; row++){
@@ -38,4 +41,12 @@ public abstract class Board {
         }
     }
     
+    
+    public int getWidth(){
+        return this.width;
+    }
+    
+    public int getHeight(){
+        return this.height;
+    }
 }

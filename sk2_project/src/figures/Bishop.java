@@ -5,6 +5,8 @@
  */
 package figures;
 
+import static figures.ChessPiece.BISHOP;
+
 /**
  *
  * @author mateusz
@@ -13,10 +15,11 @@ public class Bishop extends Figure {
     
     public Bishop(String colour){
         super("bishop", colour);
+        pieceType = BISHOP;
     }
     
     @Override
-    public boolean isMoveAllowed(){
+    public boolean isMoveAllowed(int newX, int newY){
         return true;
     } 
 }

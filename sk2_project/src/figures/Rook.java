@@ -5,6 +5,8 @@
  */
 package figures;
 
+import static figures.ChessPiece.ROOK;
+
 /**
  *
  * @author mateusz
@@ -13,10 +15,11 @@ public class Rook extends Figure {
     
     public Rook(String colour){
         super("rook", colour);
+        pieceType = ROOK;
     }
     
     @Override
-    public boolean isMoveAllowed(){
+    public boolean isMoveAllowed(int newX, int newY){
         return true;
     } 
 }

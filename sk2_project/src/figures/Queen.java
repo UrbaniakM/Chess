@@ -5,6 +5,8 @@
  */
 package figures;
 
+import static figures.ChessPiece.QUEEN;
+
 /**
  *
  * @author mateusz
@@ -13,10 +15,11 @@ public class Queen extends Figure {
     
     public Queen(String colour){
         super("queen", colour);
+        pieceType = QUEEN;
     }
     
     @Override
-    public boolean isMoveAllowed(){
+    public boolean isMoveAllowed(int newX, int newY){
         return true;
     } 
 }

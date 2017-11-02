@@ -5,6 +5,8 @@
  */
 package figures;
 
+import static figures.ChessPiece.PAWN;
+
 /**
  *
  * @author mateusz
@@ -12,6 +14,8 @@ package figures;
 public class Pawn extends Figure {
     public Pawn(String colour){
         super("pawn",colour);
+        pieceType = PAWN;
+        this.symbol = 'p';
     }
     
     @Override
