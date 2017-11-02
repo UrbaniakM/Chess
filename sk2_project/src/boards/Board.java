@@ -27,21 +27,6 @@ public abstract class Board {
         return boardMatrix[x][y];
     }
     
-    public void printBoard(){
-        for(int row = 0; row < width; row++){
-            for(int col = 0; col < height; col++){
-                if(boardMatrix[row][col] == null){
-                    System.out.print("0");
-                }
-                else {
-                    System.out.print(boardMatrix[row][col].symbol);
-                }
-            }
-            System.out.println("");
-        }
-    }
-    
-    
     public int getWidth(){
         return this.width;
     }

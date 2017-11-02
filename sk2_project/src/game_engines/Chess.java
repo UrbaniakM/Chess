@@ -19,6 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -29,6 +30,7 @@ import javafx.stage.Stage;
 public class Chess extends Application{
     protected ChessBoard chessBoard = new ChessBoard();
     private final int TILE_SIZE = 100;
+    private final int SYMBOL_SIZE = 50;
     
     private Group tilesGroup = new Group();
     private Group piecesGroup = new Group();
@@ -75,6 +77,7 @@ public class Chess extends Application{
         private ChessPiece pieceType;
         private int x,y;
         private Color pieceColor;
+        private Color symbolColor;
         private Figure figure;
         
         
@@ -84,6 +87,7 @@ public class Chess extends Application{
             relocate(x * TILE_SIZE, y * TILE_SIZE);
             figure = fig;
             pieceColor = figure.getColour() == "white" ? Color.WHITE : Color.BLACK;
+            symbolColor = figure.getColour() == "white" ? Color.BLACK : Color.WHITE;
             pieceType = figure.getPieceType();
             Ellipse pieceBackground = new Ellipse(TILE_SIZE * 0.3125,TILE_SIZE * 0.3125);
             pieceBackground.setFill(pieceColor);
@@ -92,9 +96,10 @@ public class Chess extends Application{
             pieceBackground.setTranslateX((TILE_SIZE - TILE_SIZE * 0.3125 * 2) / 2); // center the piece
             pieceBackground.setTranslateY((TILE_SIZE - TILE_SIZE * 0.3125 * 2) / 2); // center the piece
             
-            Text pieceSymbol = null;
-            
-            getChildren().addAll(pieceBackground);    
+            Text pieceSymbol = new Text(figure.getFigureSymbol());
+            pieceSymbol.setFont(new Font(SYMBOL_SIZE));
+            pieceSymbol.setFill(symbolColor);
+            getChildren().addAll(pieceBackground, pieceSymbol);    
         }
     }
     

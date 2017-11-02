@@ -15,7 +15,7 @@ public class Pawn extends Figure {
     public Pawn(String colour){
         super("pawn",colour);
         pieceType = PAWN;
-        this.symbol = 'p';
+        figureSymbol = "\u2659";
     }
     
     @Override

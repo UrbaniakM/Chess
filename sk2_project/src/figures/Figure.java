@@ -14,10 +14,10 @@ public abstract class Figure {
     protected Boolean isBeaten = false;
     protected String figureColour;
     protected int xPosition, yPosition;
-    public char symbol;// TEST
     protected int startingX, startingY;
     protected int numberOfMoves = 0;
     protected ChessPiece pieceType;
+    protected String figureSymbol;
     
     public Figure(String name, String colour){
         this.figureColour = colour;
@@ -46,5 +46,9 @@ public abstract class Figure {
     
     public ChessPiece getPieceType(){
         return this.pieceType;
+    }
+    
+    public String getFigureSymbol(){
+        return this.figureSymbol;
     }
 }
