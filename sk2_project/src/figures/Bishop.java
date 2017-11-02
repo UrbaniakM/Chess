@@ -16,6 +16,7 @@ public class Bishop extends Figure {
     public Bishop(String colour){
         super("bishop", colour);
         pieceType = BISHOP;
+        figureSymbol = "\u2657";
     }
     
     @Override

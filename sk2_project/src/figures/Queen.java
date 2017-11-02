@@ -16,6 +16,7 @@ public class Queen extends Figure {
     public Queen(String colour){
         super("queen", colour);
         pieceType = QUEEN;
+        figureSymbol = "\u2655";
     }
     
     @Override

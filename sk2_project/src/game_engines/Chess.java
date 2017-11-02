@@ -11,6 +11,7 @@ import figures.Figure;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -99,7 +100,10 @@ public class Chess extends Application{
             Text pieceSymbol = new Text(figure.getFigureSymbol());
             pieceSymbol.setFont(new Font(SYMBOL_SIZE));
             pieceSymbol.setFill(symbolColor);
-            getChildren().addAll(pieceBackground, pieceSymbol);    
+            pieceSymbol.setTranslateX(TILE_SIZE / 5.5);
+            pieceSymbol.setTranslateY(TILE_SIZE / 6);
+
+            getChildren().addAll(pieceBackground, pieceSymbol);  
         }
     }
     

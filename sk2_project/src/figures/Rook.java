@@ -16,6 +16,7 @@ public class Rook extends Figure {
     public Rook(String colour){
         super("rook", colour);
         pieceType = ROOK;
+        figureSymbol = "\u2656";
     }
     
     @Override

@@ -16,6 +16,7 @@ public class King extends Figure {
     public King(String colour){
         super("king", colour);
         pieceType = KING;
+        figureSymbol = "\u2654";
     }
     
     @Override
