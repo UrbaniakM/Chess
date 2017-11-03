@@ -18,36 +18,30 @@ public class Pawn extends Figure {
         figureSymbol = "\u2659";
     }
     
-    public Pawn(String colour, int x, int y){
-        super("pawn",colour,x,y);
+    public Pawn(String colour, int row, int col){
+        super("pawn",colour,col,row);
         pieceType = PAWN;
         figureSymbol = "\u2659";
     }
     
     @Override
-    public boolean isMoveAllowed(int newX, int newY){
-        /*if(newX != xPosition){
+    public boolean isMoveAllowed(int newCol, int newRow){
+        if(newCol != xPosition){
             return false;
         }
-        else if((yPosition == 6) && (newY == 4)){
-            System.out.println("aa");
+        else if((yPosition == 6) && (newRow == 4)){
             return true;
         }
-        else if((yPosition == 1) && (newY == 3)){
-            System.out.println("bb");
+        else if((yPosition == 1) && (newRow == 3)){
             return true;
         }
-        else if((startingY == 6) && (newY == (yPosition - 1))){
-            System.out.println("cc");
+        else if((startingY == 6) && (newRow == (yPosition - 1))){
             return true;
         }
-        else if((startingY == 1) && (newY == (yPosition + 1))){
-            System.out.println("dd");
+        else if((startingY == 1) && (newRow == (yPosition + 1))){
             return true;
         }
-        System.out.println("j");
-        return false;*/
-        return true;
+        return false;
     } 
     
     public boolean isBeatingAllowed(int newX, int newY){

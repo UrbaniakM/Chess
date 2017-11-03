@@ -19,8 +19,8 @@ public class Rook extends Figure {
         figureSymbol = "\u2656";
     }
     
-    public Rook(String colour, int x, int y){
-        super("rook", colour,x,y);
+    public Rook(String colour, int col, int row){
+        super("rook", colour,col,row);
         pieceType = ROOK;
         figureSymbol = "\u2656";
     }

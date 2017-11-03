@@ -19,8 +19,8 @@ public class Bishop extends Figure {
         figureSymbol = "\u2657";
     }
     
-    public Bishop(String colour, int x, int y){
-        super("bishop", colour, x,y);
+    public Bishop(String colour, int col, int row){
+        super("bishop", colour, col,row);
         pieceType = BISHOP;
         figureSymbol = "\u2657";
     }

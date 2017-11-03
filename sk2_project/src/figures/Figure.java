@@ -11,7 +11,7 @@ package figures;
  */
 public abstract class Figure {
     protected String figureName;
-    protected Boolean isBeaten = false;
+    protected Boolean isBeaten = false; // raczej bedzie niepotrzebne
     protected String figureColour;
     protected int xPosition, yPosition;
     protected int startingX, startingY;
@@ -24,26 +24,26 @@ public abstract class Figure {
         this.figureName = name;
     }
     
-    public Figure(String name, String colour, int x, int y){
+    public Figure(String name, String colour, int col, int row){
         this.figureColour = colour;
         this.figureName = name;
-        this.startingX = x;
-        this.startingY = y;
-        this.xPosition = x;
-        this.yPosition = y;
+        this.startingX = col;
+        this.startingY = row;
+        this.xPosition = col;
+        this.yPosition = row;
         this.numberOfMoves = 0;
     }
     
-    public void beatFigure(){
+    public void beatFigure(){ // raczej bedzie niepotrzebne
         isBeaten = true;
     }
     
-    public void setPosition(int x, int y){
-        xPosition = x;
-        yPosition = y;
+    public void setPosition(int col, int row){
+        xPosition = col;
+        yPosition = row;
         if(numberOfMoves == -1){
-            startingX = x;
-            startingY = y;
+            startingX = col;
+            startingY = row;
         }
         numberOfMoves++;
     }

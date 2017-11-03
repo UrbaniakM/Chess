@@ -19,8 +19,8 @@ public class Queen extends Figure {
         figureSymbol = "\u2655";
     }
     
-    public Queen(String colour, int x, int y){
-        super("queen", colour, x, y);
+    public Queen(String colour, int col, int row){
+        super("queen", colour, col, row);
         pieceType = QUEEN;
         figureSymbol = "\u2655";
     }

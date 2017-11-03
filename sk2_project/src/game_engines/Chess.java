@@ -63,13 +63,13 @@ public class Chess extends Application{
                 
                 tilesGroup.getChildren().add(tile);
                 
-                if(chessBoard.getFigure(row,col) != null){
-                    Piece piece = makePiece(chessBoard.getFigure(row,col),row,col);
-                    piecesBoard[row][col] = piece;
+                if(chessBoard.getFigure(col,row) != null){
+                    Piece piece = makePiece(chessBoard.getFigure(col,row),col,row);
+                    piecesBoard[col][row] = piece;
                     piecesGroup.getChildren().add(piece);
                 }
                 else {
-                    piecesBoard[row][col] = null;
+                    piecesBoard[col][row] = null;
                 }
             }
         }
@@ -103,8 +103,8 @@ public class Chess extends Application{
         return false;
     }
     
-    public Piece makePiece(Figure fig, int y, int x){
-            Piece piece = new Piece(fig,y,x);
+    public Piece makePiece(Figure fig, int x, int y){
+            Piece piece = new Piece(fig,x,y);
             
             piece.setOnMouseReleased(e -> {
                 int newX = calculatePosition(piece.getLayoutX());
@@ -119,6 +119,7 @@ public class Chess extends Application{
             
             return piece;
         }
+
     
     private class Piece extends StackPane{
         private ChessPiece pieceType;
@@ -134,7 +135,9 @@ public class Chess extends Application{
             oldY = newY * TILE_SIZE;
             int prevX = figure.getX(), prevY = figure.getY();
             if(piecesBoard[newX][newY] != null){
-                piecesGroup.getChildren().remove(piecesBoard[newY][newX]);
+                if((prevX != newX) || (prevY != newY)){
+                    piecesGroup.getChildren().remove(piecesBoard[newX][newY]);
+                }
             }
             figure.setPosition(newX, newY);
             chessBoard.setFigure(figure,newX,newY);
@@ -156,7 +159,7 @@ public class Chess extends Application{
             return this.pieceType;
         }
         
-        public Piece(Figure fig, int y, int x){
+        public Piece(Figure fig, int x, int y){
             relocate(x * TILE_SIZE, y * TILE_SIZE);
             oldX = x * TILE_SIZE;
             oldY = y * TILE_SIZE;
