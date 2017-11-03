@@ -63,8 +63,8 @@ public class Chess extends Application{
                 
                 tilesGroup.getChildren().add(tile);
                 
-                if(chessBoard.getFigure(col,row) != null){
-                    Piece piece = makePiece(chessBoard.getFigure(col,row),col,row);
+                if(chessBoard.getFigure(row,col) != null){
+                    Piece piece = makePiece(chessBoard.getFigure(row,col),row,col);
                     piecesBoard[row][col] = piece;
                     piecesGroup.getChildren().add(piece);
                 }
@@ -120,7 +120,6 @@ public class Chess extends Application{
             return piece;
         }
     
-    
     private class Piece extends StackPane{
         private ChessPiece pieceType;
         private Color pieceColor;
@@ -129,19 +128,19 @@ public class Chess extends Application{
         private double mouseX, mouseY;
         private double oldX, oldY;
         
+        
         public void movePiece(int newX, int newY){
             oldX = newX * TILE_SIZE;
             oldY = newY * TILE_SIZE;
             int prevX = figure.getX(), prevY = figure.getY();
-            if(piecesBoard[newY][newX] != null){
+            if(piecesBoard[newX][newY] != null){
                 piecesGroup.getChildren().remove(piecesBoard[newY][newX]);
-                System.out.println("a");
             }
             figure.setPosition(newX, newY);
             chessBoard.setFigure(figure,newX,newY);
             chessBoard.setFigure(null,prevX,prevY);
-            piecesBoard[newY][newX] = piecesBoard[prevY][prevX];
-            piecesBoard[prevY][prevX] = null;
+            piecesBoard[newX][newY] = piecesBoard[prevX][prevY];
+            piecesBoard[prevX][prevY] = null;
             relocate(oldX, oldY);
         }
         

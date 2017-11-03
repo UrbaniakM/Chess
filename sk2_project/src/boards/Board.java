@@ -23,8 +23,8 @@ public abstract class Board {
     
     abstract protected void fillBoard();
     
-    public Figure getFigure(int x, int y){
-        return boardMatrix[x][y];
+    public Figure getFigure(int row, int col){
+        return boardMatrix[row][col];
     }
     
     public void setFigure(Figure fig, int x, int y){

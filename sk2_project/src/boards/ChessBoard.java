@@ -79,6 +79,8 @@ public class ChessBoard extends Board {
         blackPieces[15] = new King("black", 0,4);
         boardMatrix[0][4] = blackPieces[15];
     }*/
+    
+    
     @Override
     protected void fillBoard(){
         for(int row = 0; row < height; row++){
