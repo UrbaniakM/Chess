@@ -9,6 +9,7 @@ import boards.ChessBoard;
 import figures.ChessPiece;
 import static figures.ChessPiece.PAWN;
 import figures.Figure;
+import figures.Pawn;
 
 import javafx.application.Application;
 import static javafx.application.Application.launch;
@@ -37,6 +38,8 @@ public class Chess extends Application{
     private Group tilesGroup = new Group();
     private Group piecesGroup = new Group();
     
+    private Piece piecesBoard[][] = new Piece[8][8];
+    
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(createBoard());
@@ -62,7 +65,11 @@ public class Chess extends Application{
                 
                 if(chessBoard.getFigure(col,row) != null){
                     Piece piece = makePiece(chessBoard.getFigure(col,row),col,row);
+                    piecesBoard[row][col] = piece;
                     piecesGroup.getChildren().add(piece);
+                }
+                else {
+                    piecesBoard[row][col] = null;
                 }
             }
         }
@@ -77,12 +84,21 @@ public class Chess extends Application{
     private boolean tryMove(Piece piece, int newX, int newY){
         if(piece.getPieceType() != PAWN) {
             if(piece.getFigure().isMoveAllowed(newX, newY)){
-                piece.getFigure().setPosition(newX,newY);
-                chessBoard.setFigure(piece.getFigure(),newX,newY);
+                return true;
             }
         }
         else {
-            return false;
+            Pawn pomFig = (Pawn)piece.getFigure();
+            if(chessBoard.getFigure(newX,newY) == null){
+                if(pomFig.isMoveAllowed(newX, newY)){
+                    return true;
+                }
+            }
+            else {
+                if(pomFig.isBeatingAllowed(newX, newY)){
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -93,23 +109,44 @@ public class Chess extends Application{
             piece.setOnMouseReleased(e -> {
                 int newX = calculatePosition(piece.getLayoutX());
                 int newY = calculatePosition(piece.getLayoutY());
-                tryMove(piece, newX, newY); // if wrong move then player has another try - check if tryMove == false
+                if(tryMove(piece, newX, newY)){ // if wrong move then player has another try - check if tryMove == false
+                    piece.movePiece(newX,newY);
+                }
+                else {
+                    piece.abortMove();
+                }
             });
             
             return piece;
         }
     
+    
     private class Piece extends StackPane{
         private ChessPiece pieceType;
-        private int x,y;
         private Color pieceColor;
         private Color symbolColor;
         private Figure figure;
+        private double mouseX, mouseY;
+        private double oldX, oldY;
         
         public void movePiece(int newX, int newY){
-            this.x = newX;
-            this.y = newY;
+            oldX = newX * TILE_SIZE;
+            oldY = newY * TILE_SIZE;
+            int prevX = figure.getX(), prevY = figure.getY();
+            if(piecesBoard[newY][newX] != null){
+                piecesGroup.getChildren().remove(piecesBoard[newY][newX]);
+                System.out.println("a");
+            }
             figure.setPosition(newX, newY);
+            chessBoard.setFigure(figure,newX,newY);
+            chessBoard.setFigure(null,prevX,prevY);
+            piecesBoard[newY][newX] = piecesBoard[prevY][prevX];
+            piecesBoard[prevY][prevX] = null;
+            relocate(oldX, oldY);
+        }
+        
+        public void abortMove(){
+            relocate(oldX,oldY);
         }
         
         public Figure getFigure(){
@@ -121,9 +158,9 @@ public class Chess extends Application{
         }
         
         public Piece(Figure fig, int y, int x){
-            this.x = x;
-            this.y = y;
             relocate(x * TILE_SIZE, y * TILE_SIZE);
+            oldX = x * TILE_SIZE;
+            oldY = y * TILE_SIZE;
             figure = fig;
             pieceColor = figure.getColour() == "white" ? Color.WHITE : Color.BLACK;
             symbolColor = figure.getColour() == "white" ? Color.BLACK : Color.WHITE;
@@ -142,6 +179,15 @@ public class Chess extends Application{
             pieceSymbol.setTranslateY(TILE_SIZE / 5.5); // center the piece's symbol
 
             getChildren().addAll(pieceBackground, pieceSymbol);  
+            
+            setOnMousePressed(e -> {
+                mouseX = e.getSceneX();
+                mouseY = e.getSceneY();
+            });
+            
+            setOnMouseDragged(e -> {
+                relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
+            });
         }
     }
     

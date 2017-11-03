@@ -29,6 +29,8 @@ public abstract class Figure {
         this.figureName = name;
         this.startingX = x;
         this.startingY = y;
+        this.xPosition = x;
+        this.yPosition = y;
         this.numberOfMoves = 0;
     }
     
@@ -58,5 +60,13 @@ public abstract class Figure {
     
     public String getFigureSymbol(){
         return this.figureSymbol;
+    }
+    
+    public int getX(){
+        return this.xPosition;
+    }
+    
+    public int getY(){
+        return this.yPosition;
     }
 }

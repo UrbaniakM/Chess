@@ -26,26 +26,32 @@ public class Pawn extends Figure {
     
     @Override
     public boolean isMoveAllowed(int newX, int newY){
-        if(newX != xPosition){
+        /*if(newX != xPosition){
             return false;
         }
         else if((yPosition == 6) && (newY == 4)){
+            System.out.println("aa");
             return true;
         }
         else if((yPosition == 1) && (newY == 3)){
+            System.out.println("bb");
             return true;
         }
-        else if((startingY == 6) && (newY != (yPosition - 1))){
-            return false;
+        else if((startingY == 6) && (newY == (yPosition - 1))){
+            System.out.println("cc");
+            return true;
         }
-        else if((startingY == 1) && (newY != (yPosition + 1))){
-            return false;
+        else if((startingY == 1) && (newY == (yPosition + 1))){
+            System.out.println("dd");
+            return true;
         }
+        System.out.println("j");
+        return false;*/
         return true;
     } 
     
     public boolean isBeatingAllowed(int newX, int newY){
-        if((newX == (xPosition + 1)) || (newX == (xPosition - 1) )){
+        /*if((newX == (xPosition + 1)) || (newX == (xPosition - 1) )){
             if((startingY == 6) && (newY != yPosition - 1)){
                 return false;
             }
@@ -56,8 +62,7 @@ public class Pawn extends Figure {
         else {
             return false;
         }
-        xPosition = newX;
-        yPosition = newY;
+        return true;*/
         return true;
     }
 }
