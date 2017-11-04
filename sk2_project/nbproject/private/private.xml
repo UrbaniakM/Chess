@@ -5,13 +5,8 @@
         <group>
             <file>file:/home/mateusz/Chess/sk2_project/src/figures/Figure.java</file>
             <file>file:/home/mateusz/Chess/sk2_project/src/boards/Board.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/Bishop.java</file>
             <file>file:/home/mateusz/Chess/sk2_project/src/boards/ChessBoard.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/Pawn.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/Rook.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/King.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/Queen.java</file>
-            <file>file:/home/mateusz/Chess/sk2_project/src/figures/Knight.java</file>
+            <file>file:/home/mateusz/Chess/sk2_project/src/game_engines/Chess.java</file>
         </group>
     </open-files>
 </project-private>

@@ -39,13 +39,13 @@ public abstract class Figure {
     }
     
     public void setPosition(int col, int row){
-        xPosition = col;
-        yPosition = row;
+        this.xPosition = col;
+        this.yPosition = row;
         if(numberOfMoves == -1){
-            startingX = col;
-            startingY = row;
+            this.startingX = col;
+            this.startingY = row;
         }
-        numberOfMoves++;
+        this.numberOfMoves++;
     }
     
     abstract public boolean isMoveAllowed(int newX, int newY);

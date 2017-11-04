@@ -38,7 +38,7 @@ public class Chess extends Application{
     private Group tilesGroup = new Group();
     private Group piecesGroup = new Group();
     
-    private Piece piecesBoard[][] = new Piece[8][8];
+    private Piece piecesBoard[][] = new Piece[chessBoard.getWidth()][chessBoard.getHeight()];
     
     @Override
     public void start(Stage primaryStage) {
@@ -55,6 +55,7 @@ public class Chess extends Application{
     
     private Parent createBoard(){
         Pane root = new Pane();
+        chessBoard.checkBoard();
         root.setPrefSize(chessBoard.getWidth() * TILE_SIZE, chessBoard.getHeight()*TILE_SIZE);
         root.getChildren().addAll(tilesGroup,piecesGroup);
         for(int row = 0; row < chessBoard.getHeight(); row++) {
@@ -73,7 +74,6 @@ public class Chess extends Application{
                 }
             }
         }
-        
         return root;
     }
     
@@ -103,6 +103,20 @@ public class Chess extends Application{
         return false;
     }
     
+    public void printPieces(){
+        for(int row = 0; row < 8; row++){
+            for(int col = 0; col < 8; col++){
+                if(piecesBoard[col][row] == null){
+                    System.out.print("0");
+                }
+                else{
+                    System.out.print("-");
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+    
     public Piece makePiece(Figure fig, int x, int y){
             Piece piece = new Piece(fig,x,y);
             
@@ -120,6 +134,10 @@ public class Chess extends Application{
             return piece;
         }
 
+    private void setPiece(int newX, int newY, int prevX, int prevY){
+        piecesBoard[newX][newY] = piecesBoard[prevX][prevY];
+        piecesBoard[prevX][prevY] = null;
+    }
     
     private class Piece extends StackPane{
         private ChessPiece pieceType;
@@ -139,12 +157,14 @@ public class Chess extends Application{
                     piecesGroup.getChildren().remove(piecesBoard[newX][newY]);
                 }
             }
-            figure.setPosition(newX, newY);
-            chessBoard.setFigure(figure,newX,newY);
-            chessBoard.setFigure(null,prevX,prevY);
+            chessBoard.setFigure(figure,newX,newY, prevX, prevY);
             piecesBoard[newX][newY] = piecesBoard[prevX][prevY];
             piecesBoard[prevX][prevY] = null;
+            //setPiece(newX,newY,prevX,prevY); - setPiece niepotrzebne raczej
             relocate(oldX, oldY);
+            //printPieces();
+            //System.out.println("");
+            //chessBoard.printBoard(); // tutaj <<<---- cos nie tak z czyszczeniem, ALE DZIALA
         }
         
         public void abortMove(){

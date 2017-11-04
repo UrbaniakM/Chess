@@ -21,14 +21,30 @@ public abstract class Board {
         boardMatrix = new Figure[width][height];
     }
     
+    public void printBoard(){
+        for(int row = 0; row < 8; row++){
+            for(int col = 0; col < 8; col++){
+                if(boardMatrix[col][row] == null){
+                    System.out.print("0");
+                }
+                else{
+                    System.out.print("-");
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+    
     abstract protected void fillBoard();
     
     public Figure getFigure(int col, int row){
         return boardMatrix[col][row];
     }
     
-    public void setFigure(Figure fig, int x, int y){
+    public void setFigure(Figure fig, int x, int y, int oldX, int oldY){
         boardMatrix[x][y] = fig;
+        boardMatrix[oldY][oldY] = null;
+        fig.setPosition(x,y);
     }
     
     public int getWidth(){

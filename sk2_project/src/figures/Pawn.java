@@ -18,7 +18,7 @@ public class Pawn extends Figure {
         figureSymbol = "\u2659";
     }
     
-    public Pawn(String colour, int row, int col){
+    public Pawn(String colour, int col, int row){
         super("pawn",colour,col,row);
         pieceType = PAWN;
         figureSymbol = "\u2659";
