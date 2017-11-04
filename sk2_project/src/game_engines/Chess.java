@@ -55,7 +55,6 @@ public class Chess extends Application{
     
     private Parent createBoard(){
         Pane root = new Pane();
-        chessBoard.checkBoard();
         root.setPrefSize(chessBoard.getWidth() * TILE_SIZE, chessBoard.getHeight()*TILE_SIZE);
         root.getChildren().addAll(tilesGroup,piecesGroup);
         for(int row = 0; row < chessBoard.getHeight(); row++) {

@@ -26,7 +26,13 @@ public class Bishop extends Figure {
     }
     
     @Override
-    public boolean isMoveAllowed(int newX, int newY){
+    public boolean isMoveAllowed(int newCol, int newRow){
+        if(newCol < 0 || newCol > 7){
+            return false;
+        }
+        else if(newRow < 0 || newRow > 7){
+            return false;
+        }
         return true;
     } 
 }

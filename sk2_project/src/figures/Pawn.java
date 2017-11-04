@@ -26,7 +26,13 @@ public class Pawn extends Figure {
     
     @Override
     public boolean isMoveAllowed(int newCol, int newRow){
-        if(newCol != xPosition){
+        if(newCol < 0 || newCol > 7){
+            return false;
+        }
+        else if(newRow < 0 || newRow > 7){
+            return false;
+        }
+        else if(newCol != xPosition){
             return false;
         }
         else if((yPosition == 6) && (newRow == 4)){
@@ -44,19 +50,18 @@ public class Pawn extends Figure {
         return false;
     } 
     
-    public boolean isBeatingAllowed(int newX, int newY){
-        /*if((newX == (xPosition + 1)) || (newX == (xPosition - 1) )){
-            if((startingY == 6) && (newY != yPosition - 1)){
+    public boolean isBeatingAllowed(int newCol, int newRow){ // BICIE W PRZELOCIE
+        if((newCol == (xPosition + 1)) || (newCol == (xPosition - 1) )){
+            if((startingY == 6) && (newRow != yPosition - 1)){
                 return false;
             }
-            if((startingY == 1) && (newY != yPosition + 1)){
+            if((startingY == 1) && (newRow != yPosition + 1)){
                 return false;
             }
         }
         else {
             return false;
         }
-        return true;*/
         return true;
     }
 }

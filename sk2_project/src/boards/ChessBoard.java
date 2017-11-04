@@ -71,5 +71,6 @@ public class ChessBoard extends Board {
         // kings
         boardMatrix[4][7] = new King("white", 4,7);
         boardMatrix[4][0] = new King("black", 4,0);
+        checkBoard();
     }
 }

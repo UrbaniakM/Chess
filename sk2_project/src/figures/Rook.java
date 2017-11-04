@@ -26,7 +26,19 @@ public class Rook extends Figure {
     }
     
     @Override
-    public boolean isMoveAllowed(int newX, int newY){
-        return true;
+    public boolean isMoveAllowed(int newCol, int newRow){
+        if(newCol < 0 || newCol > 7){
+            return false;
+        }
+        else if(newRow < 0 || newRow > 7){
+            return false;
+        }
+        else if(newCol != xPosition && newRow == yPosition){
+            return true;
+        }
+        else if(newCol == xPosition && newRow != yPosition){
+            return true;
+        }
+        return false;
     } 
 }
