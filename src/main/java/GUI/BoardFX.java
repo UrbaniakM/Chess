@@ -1,4 +1,10 @@
 package GUI;
 
-public class BoardFX {
+import javafx.scene.layout.FlowPane;
+
+public class BoardFX extends FlowPane{
+
+    public BoardFX(){
+
+    }
 }
