@@ -1,9 +1,10 @@
 package Logic;
 
 public class Board {
-    private Player.Color[][] state = new Player.Color[3][3];
+    private Player.Color[][] state;
 
     public Board(){
+        state = new Player.Color[3][3];
         for(int x = 0; x < 3; x++){
             for(int y = 0; y < 3; y++){
                 state[x][y] = Player.Color.EMPTY;

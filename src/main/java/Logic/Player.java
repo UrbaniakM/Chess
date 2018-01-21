@@ -28,7 +28,8 @@ public class Player {
         }
     }
 
-    public void doMove(Move move){
+    public void doMove(int x, int y){
+        Move move = new Move(x,y,getColor());
         board.doMove(move);
     }
 }
