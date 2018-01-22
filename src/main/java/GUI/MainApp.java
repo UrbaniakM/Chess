@@ -18,12 +18,15 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GameController gameController;
+        GameController gameController = new GameController();
 
-        mainScene = new Scene(new BoardFX(player), 460, 460);
+        //mainScene = new Scene(new BoardFX(player), 460, 460);
+        mainScene = new Scene(new SearchGameButton(gameController,primaryStage));
         primaryStage.setScene(mainScene);
         primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.show();
     }
+
+
 }

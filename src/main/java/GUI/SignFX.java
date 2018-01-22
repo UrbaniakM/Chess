@@ -1,6 +1,7 @@
 package GUI;
 
 
+import App.GameController;
 import Logic.Player;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -13,14 +14,16 @@ public class SignFX extends StackPane{
     private Color rectangleFill;
     private Text text;
 
+    private GameController gameController;
     private Player player;
     private int x;
     private int y;
 
-    public SignFX(Player player, int x, int y) {
+    public SignFX(GameController gameController, Player player, int x, int y) {
         this.x = x;
         this.y = y;
         this.player = player;
+        this.gameController = gameController;
         tile = new Rectangle(150,150);
         rectangleFill = Color.rgb(224,224,224);
         tile.setFill(rectangleFill);
@@ -34,6 +37,7 @@ public class SignFX extends StackPane{
         this.setOnMouseClicked(event -> {
             this.player.doMove(this.x,this.y);
             this.setFill(this.player.getColor());
+            this.gameController.sendMove(this.x,this.y);
         });
     }
 

@@ -4,6 +4,8 @@ import GUI.BoardFX;
 import Logic.Board;
 import Logic.Move;
 import Logic.Player;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,15 +24,17 @@ public class GameController {
     private final byte DECLINE_OPPONNENT_AS_WINNER = 4;
     private final byte SEARCH_FOR_NEW_GAME = 5;
     private final byte START_NEW_GAME = 6;
+    private final byte ACCEPT_REMATCH = 7; // TODO
+    private final byte DECLINE_REMATCH = 8; // TODO
 
     private Board gameBoard;
     private Player clientPlayer;
 
     private BoardFX boardFX;
-
+    private Stage primaryStage;
 
     public void reciveCommand(){
-        byte command[] = new byte[3];
+        byte[] command = new byte[3];
         try{
             in.read(command);
         } catch (IOException e) {
@@ -38,22 +42,30 @@ public class GameController {
         }
         if(command[0] == RECIVE_MOVE){
             reciveMove(command);
-        } else if(command[0] == 2){
+        } else if(command[0] == DECLARE_WINNING){
             reciveMove(command);
-            // TODO: check if winner
-        } else if (command[0] == 6){
+            //if true then confirmWinner(); else declineWinner()// TODO: check if winner
+        } else if (command[0] == START_NEW_GAME){
             startNewGame(command);
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public void declareWinner(){
-
+    public void confirmWinner(){
+        try{
+            out.write(CONFIRM_OPPONNENT_AS_WINNER);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void confirmWinner(){
-
+    public void declineWinner(){
+        try{
+            out.write(DECLINE_OPPONNENT_AS_WINNER);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void reciveMove(byte command[]){
@@ -64,26 +76,46 @@ public class GameController {
         boardFX.setFill(x,y,clientPlayer.getOpponent());
     }
 
-    public void sendMove(){
+    public void sendMove(int x, int y){
+        byte[] command = new byte[3];
+        command[0] = SEND_MOVE;
+        //command[0] = DECLARE_WINNING;// TODO: check if not winner before sending move
+        command[1] = (byte)x;
+        command[2] = (byte)y;
+        try{
+            out.write(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        reciveCommand();
     }
 
-    public void searchForNewGame(){
+    public void searchForNewGame(Stage primaryStage){
+        this.primaryStage = primaryStage;
+        try{
+            out.write(SEARCH_FOR_NEW_GAME);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        reciveCommand();
     }
 
     private void startNewGame(byte command[]){
         gameBoard = new Board();
         clientPlayer = (command[1] == 0) ? new Player(Player.Color.O,gameBoard) : new Player(Player.Color.X,gameBoard);
-        boardFX = new BoardFX(clientPlayer);
+        boardFX = new BoardFX(clientPlayer,this);
+        primaryStage.setScene(new Scene(boardFX,460,460));
+        // TODO: if O then do the first move, else reciveCommand();
     }
 
     public void acceptRematch(){
-
+        // TODO
     }
 
     public void declineRematch(){
-
+        // TODO
     }
 
     public void close(){
@@ -97,15 +129,13 @@ public class GameController {
     }
 
     public GameController(){
-        while(server == null) {
-            try{
-                server = new Socket("127.0.0.1",3000);
-                in = server.getInputStream();
-                out = server.getOutputStream();
-            } catch (IOException e) {
-                e.printStackTrace();
-                continue;
-            }
+        try{
+            server = new Socket("192.168.1.105",3000);
+            in = server.getInputStream();
+            out = server.getOutputStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(100);
         }
     }
 }
