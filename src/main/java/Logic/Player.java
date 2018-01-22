@@ -10,6 +10,9 @@ public class Player {
     private Board board;
 
     public Player(Color color, Board board){
+        if(color == Color.EMPTY || board == null || color == null){
+            throw new IllegalArgumentException();
+        }
         this.color = color;
         this.board = board;
     }

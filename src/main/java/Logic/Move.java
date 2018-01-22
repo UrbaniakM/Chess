@@ -6,6 +6,9 @@ public class Move {
     private int y;
 
     public Move(int x, int y, Player.Color color){
+        if(x < 0 || x > 2 || y < 0 || y > 2 || color == Player.Color.EMPTY || color == null){
+            throw new IllegalArgumentException();
+        }
         this.color = color;
         this.x = x;
         this.y = y;
