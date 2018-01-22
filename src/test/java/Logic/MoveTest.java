@@ -12,6 +12,7 @@ public class MoveTest {
         Move moveXOver = new Move(3,0, Player.Color.X);
         Move moveXUnder = new Move(-1,0, Player.Color.X);
         Move moveEmptyColor = new Move(0,0, Player.Color.EMPTY);
+        Move moveNullColor = new Move(0,0,null);
     }
 
     @Test
