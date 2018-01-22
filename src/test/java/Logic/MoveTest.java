@@ -1,9 +1,7 @@
 package Logic;
 
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class MoveTest {
 
@@ -16,4 +14,11 @@ public class MoveTest {
         Move moveEmptyColor = new Move(0,0, Player.Color.EMPTY);
     }
 
+    @Test
+    public void creatingMoveTest(){
+        Move move = new Move(1,2, Player.Color.X);
+        Assert.assertEquals(1,move.getX());
+        Assert.assertEquals(2,move.getY());
+        Assert.assertEquals(Player.Color.X,move.getColor());
+    }
 }
