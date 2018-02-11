@@ -17,15 +17,15 @@ public class GameController {
     private InputStream in = null;
     private OutputStream out = null;
 
-    private final byte SEND_MOVE = 0;
-    private final byte RECIVE_MOVE = 1;
-    private final byte DECLARE_WINNING = 2;
-    private final byte CONFIRM_OPPONNENT_AS_WINNER = 3;
-    private final byte DECLINE_OPPONNENT_AS_WINNER = 4;
-    private final byte SEARCH_FOR_NEW_GAME = 5;
-    private final byte START_NEW_GAME = 6;
-    private final byte ACCEPT_REMATCH = 7; // TODO
-    private final byte DECLINE_REMATCH = 8; // TODO
+    private static final byte SEND_MOVE = 0;
+    private static final byte RECIVE_MOVE = 1;
+    private static final byte DECLARE_WINNING = 2;
+    private static final byte CONFIRM_OPPONNENT_AS_WINNER = 3;
+    private static final byte DECLINE_OPPONNENT_AS_WINNER = 4;
+    private static final byte SEARCH_FOR_NEW_GAME = 5;
+    private static final byte START_NEW_GAME = 6;
+    private static final byte ACCEPT_REMATCH = 7; // TODO
+    private static final byte DECLINE_REMATCH = 8; // TODO
 
     private Board gameBoard;
     private Player clientPlayer;
