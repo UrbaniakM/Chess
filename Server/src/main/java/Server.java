@@ -9,7 +9,7 @@ public class Server {
     private ServerSocket serverSocket = null;
     private ArrayList<Client> clients = null;
     private Socket clientSocket = null;
-    static Queue<Client> clientsWaiting = null;
+    private static final Queue<Client> newGameQueue = new ArrayBlockingQueue<>(10);
 
     static final byte SEND_MOVE = 0;
     static final byte RECIVE_MOVE = 1;
@@ -26,7 +26,6 @@ public class Server {
         try{
             serverSocket = new ServerSocket(3000);
             clients = new ArrayList<>();
-            clientsWaiting = new ArrayBlockingQueue<>(10);
             //TODO: przy wychodzeniu clienta z servera, usuniecie tych czekajacych na nowa gre z listy
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,5 +46,17 @@ public class Server {
                 System.out.println("Connection Error");
             }
         }
+    }
+
+    public static final void addToQueue(Client client){
+        newGameQueue.add(client);
+    }
+
+    public static final void removeFromQueue(Client client){
+        newGameQueue.remove(client);
+    }
+
+    public static final Client retriveFromQueue(){
+        return newGameQueue.poll();
     }
 }

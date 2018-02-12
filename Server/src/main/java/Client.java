@@ -20,7 +20,29 @@ public class Client extends Thread{
 
     }
 
-    public void start(){
+    public void reciveCommand(){
+        byte[] command = new byte[3];
+        try{
+            in.read(command);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(command[0] == Server.RECIVE_MOVE){
+            reciveMove(command);
+        } else if(command[0] == Server.DECLARE_WINNING){
+            reciveMove(command);
+            //if true then confirmWinner(); else declineWinner()// TODO: check if winner
+        } else if (command[0] == Server.SEARCH_FOR_NEW_GAME){
+            startNewGame(command);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
 
+
+    public void start(){
+        while(true){
+            reciveCommand();
+        }
     }
 }
