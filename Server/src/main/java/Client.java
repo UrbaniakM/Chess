@@ -1,48 +1,51 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import javax.sql.rowset.serial.SerialBlob;
+import java.io.*;
 import java.net.Socket;
 
 public class Client extends Thread{
     private Socket socket;
-    private InputStream in = null;
-    private OutputStream out = null;
+
+    static final byte NEW_GAME = 2;
+    static final byte EXIT = 4;
+
+    public boolean wantsToPlay = false;
 
     public Client(Socket socket){
         this.socket = socket;
-        try{
-            in = socket.getInputStream();
-            out = socket.getOutputStream();
-        } catch (IOException ex){
-            ex.printStackTrace();
-            System.out.println("Connection Error");
-        }
-
     }
 
-    public void reciveCommand(){
-        byte[] command = new byte[3];
-        try{
+    public Socket getSocket(){
+        return socket;
+    }
+
+    public void close(){
+        try {
+            socket.close();
+            Server.removeClient(this);
+        } catch (IOException ex){
+            System.out.println("Connection Error"); // TODO: disconnect client
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            byte[] command = new byte[3];
+            InputStream in = socket.getInputStream();
+            //for (int i = 0; i < 3; i++) {
+            //    command[i] = (byte) in.read();
+            //}
             in.read(command);
+            if (command[0] == NEW_GAME) {
+                wantsToPlay = true;
+            } else if (command[0] == EXIT) {
+                close();
+            } else {
+                System.out.println("Connection Error"); // TODO: disconnect client
+                throw new IllegalArgumentException();
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        if(command[0] == Server.RECIVE_MOVE){
-            reciveMove(command);
-        } else if(command[0] == Server.DECLARE_WINNING){
-            reciveMove(command);
-            //if true then confirmWinner(); else declineWinner()// TODO: check if winner
-        } else if (command[0] == Server.SEARCH_FOR_NEW_GAME){
-            startNewGame(command);
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-
-    public void start(){
-        while(true){
-            reciveCommand();
         }
     }
 }

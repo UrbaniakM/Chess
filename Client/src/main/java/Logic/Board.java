@@ -1,7 +1,10 @@
 package Logic;
 
+import java.util.concurrent.Semaphore;
+
 public class Board {
     private Player.Color[][] state;
+    private Semaphore mutex = new Semaphore(1);
 
     public Board(){
         state = new Player.Color[3][3];
@@ -10,6 +13,10 @@ public class Board {
                 state[x][y] = Player.Color.EMPTY;
             }
         }
+    }
+
+    public Player.Color[][] getState() {
+        return state;
     }
 
     public Player.Color getState(int x, int y) {
@@ -21,13 +28,14 @@ public class Board {
     }
 
     public void doMove(Move move){
+        mutex.acquireUninterruptibly();
         int x = move.getX();
         int y = move.getY();
-
         if(getState(x,y) == Player.Color.EMPTY){
             setState(x,y,move.getColor());
         } else { // TODO: invalid move - SEND INFO TO SERVER OR SOMETHING IN 'PLAYER' class
 
         }
+        mutex.release();
     }
 }

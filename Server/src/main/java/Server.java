@@ -2,61 +2,113 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 public class Server {
-    private ServerSocket serverSocket = null;
-    private ArrayList<Client> clients = null;
-    private Socket clientSocket = null;
-    private static final Queue<Client> newGameQueue = new ArrayBlockingQueue<>(10);
+    private static ServerSocket serverSocket = null;
+    private static volatile ArrayList<Client> clients = null;
+    private static volatile ArrayList<Game> games = null;
+    private static Semaphore mutex = new Semaphore(1);
 
-    static final byte SEND_MOVE = 0;
-    static final byte RECIVE_MOVE = 1;
-    static final byte DECLARE_WINNING = 2;
-    static final byte CONFIRM_OPPONNENT_AS_WINNER = 3;
-    static final byte DECLINE_OPPONNENT_AS_WINNER = 4;
-    static final byte SEARCH_FOR_NEW_GAME = 5;
-    static final byte START_NEW_GAME = 6;
-    static final byte ACCEPT_REMATCH = 7;
-    static final byte DECLINE_REMATCH = 8;
-
+    public static void main(String[] args){
+        Server server = new Server();
+        server.run();
+    }
 
     public Server(){
         try{
             serverSocket = new ServerSocket(3000);
             clients = new ArrayList<>();
-            //TODO: przy wychodzeniu clienta z servera, usuniecie tych czekajacych na nowa gre z listy
+            games = new ArrayList<>();
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(100);
         }
     }
 
-    public void run(){
-        while(true){
-            try{
-                clientSocket = serverSocket.accept();
-                System.out.println("Connection Established, client IP: " + clientSocket.getInetAddress());
-                Client client = new Client(clientSocket);
-                client.start();
+    public static List<Client> getClients(){
+        return clients;
+    }
 
-            } catch(IOException ex){
+    public static void addClient(Client client){
+        clients.add(client);
+    }
+
+    public static void removeClient(Client client){
+        clients.remove(client);
+    }
+
+    public static void newGame(Client clientFirst, Client clientSecond){
+        Game game = new Game(clientFirst, clientSecond);
+        clientFirst.wantsToPlay = false;
+        clientSecond.wantsToPlay = false;
+        games.add(game);
+        game.start();
+    }
+
+    public void run(){
+        System.out.println("Server is running...");
+        new Thread(new HandleNewClients()).start();
+        while(true){
+            try {
+                Client first = null;
+                Client second = null;
+                int i = 0;
+                mutex.acquire();
+                while (i < clients.size()) {
+                    if (clients.get(i).wantsToPlay) {
+                        first = clients.get(i);
+                        i++;
+                        break;
+                    }
+                    i++;
+                }
+                while (i < clients.size()) {
+                    if (clients.get(i).wantsToPlay) {
+                        second = clients.get(i);
+                        break;
+                    }
+                }
+                if (second != null) {
+                    newGame(first, second);
+                }
+            } catch (InterruptedException ex){
                 ex.printStackTrace();
-                System.out.println("Connection Error");
+                System.out.println("Mutex error");
+            } finally {
+                mutex.release();
             }
         }
     }
 
-    public static final void addToQueue(Client client){
-        newGameQueue.add(client);
-    }
+    private class HandleNewClients implements Runnable {
+        private Socket clientSocket = null;
 
-    public static final void removeFromQueue(Client client){
-        newGameQueue.remove(client);
-    }
-
-    public static final Client retriveFromQueue(){
-        return newGameQueue.poll();
+        public void run(){
+            System.out.println("Start handling new connections...");
+            while(true){
+                try{
+                    clientSocket = serverSocket.accept();
+                    clientSocket.setReceiveBufferSize(3);
+                    clientSocket.setSendBufferSize(3);
+                    mutex.acquire();
+                    System.out.println("Connection Established, client IP: " + clientSocket.getInetAddress());
+                    Client client = new Client(clientSocket);
+                    client.start();
+                    clients.add(client);
+                } catch(IOException ex){
+                    ex.printStackTrace();
+                    System.out.println("Connection Error");
+                } catch (InterruptedException ex){
+                    ex.printStackTrace();
+                    System.out.println("Mutex error");
+                } finally {
+                    mutex.release();
+                }
+            }
+        }
     }
 }

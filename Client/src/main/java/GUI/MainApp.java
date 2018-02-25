@@ -8,9 +8,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
-    Scene mainScene;
-    private Board gameBoard;
-    private Player player;
+    public static Stage primaryStage;
+    public static GameController gameController = new GameController();
+
 
     public static void main(String[] args) {
         launch(args);
@@ -18,11 +18,8 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        GameController gameController = new GameController();
-
-        //mainScene = new Scene(new BoardFX(player), 460, 460);
-        mainScene = new Scene(new SearchGameButton(gameController,primaryStage));
-        primaryStage.setScene(mainScene);
+        this.primaryStage = primaryStage;
+        primaryStage.setScene(new Scene(new SearchGameButton()));
         primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.show();

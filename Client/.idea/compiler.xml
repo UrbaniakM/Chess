@@ -9,7 +9,7 @@
         <module name="Tic-Tac-Toe" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="Tic-Tac-Toe" target="1.8" />
     </bytecodeTargetLevel>
   </component>

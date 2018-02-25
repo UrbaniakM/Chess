@@ -3,6 +3,8 @@ package GUI;
 
 import App.GameController;
 import Logic.Player;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.BooleanPropertyBase;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -14,16 +16,27 @@ public class SignFX extends StackPane{
     private Color rectangleFill;
     private Text text;
 
-    private GameController gameController;
+    private BooleanProperty isEmpty = new BooleanPropertyBase() {
+        @Override
+        public Object getBean() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return null;
+        }
+    };
+
     private Player player;
     private int x;
     private int y;
 
-    public SignFX(GameController gameController, Player player, int x, int y) {
+    public SignFX(Player player, int x, int y) {
         this.x = x;
         this.y = y;
         this.player = player;
-        this.gameController = gameController;
+        this.isEmpty.setValue(true);
         tile = new Rectangle(150,150);
         rectangleFill = Color.rgb(224,224,224);
         tile.setFill(rectangleFill);
@@ -34,10 +47,14 @@ public class SignFX extends StackPane{
         text.setFont(Font.font("Verdana", 90));
         this.getChildren().add(text);
 
+        this.disableProperty().bind(GameController.isPlayerTurn.not()
+            .or(isEmpty.not())
+        );
         this.setOnMouseClicked(event -> {
-            this.player.doMove(this.x,this.y);
-            this.setFill(this.player.getColor());
-            this.gameController.sendMove(this.x,this.y);
+                this.player.doMove(this.x, this.y);
+                this.setFill(this.player.getColor());
+                this.isEmpty.setValue(false);
+                GameController.isPlayerTurn.setValue(false);
         });
     }
 
@@ -46,5 +63,6 @@ public class SignFX extends StackPane{
         String signText = (color == Player.Color.O) ? "O" : "X";
         text.setText(signText);
         tile.setFill(rectangleFill);
+        this.isEmpty.set(false);
     }
 }

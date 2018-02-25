@@ -5,10 +5,10 @@ import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
 public class SearchGameButton extends Button {
-    public SearchGameButton(GameController gameController, Stage primaryStage){
+    public SearchGameButton(){
         super("Search for new game");
         this.setOnMouseClicked(event -> {
-            gameController.searchForNewGame(primaryStage);
+            MainApp.gameController.startNewGame();
             // TODO: pop alert informing about searching new game
         });
     }
