@@ -18,8 +18,18 @@ public class Server {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                mutex.acquireUninterruptibly();
                 int i = 0;
+                try {
+                    while (i < games.size()) {
+                        games.get(i).interrupt();
+                        games.get(i).join();
+                        i++;
+                    }
+                } catch (Throwable e){
+                    // do nothing
+                }
+                mutex.acquireUninterruptibly();
+                i = 0;
                 byte[] exitCommand = new byte[3];
                 exitCommand[0] = Client.EXIT;
                 try {
@@ -30,7 +40,7 @@ public class Server {
                         i++;
                     }
                 }  catch (Throwable e){
-                    // donothing
+                    // do nothing
                 }
                 serverSocket = null;
                 mutex.release();

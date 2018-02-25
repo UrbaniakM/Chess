@@ -55,8 +55,12 @@ public class GameController {
         }
     };
 
-    public static Thread threadRecive;
-    public static Thread threadSend;
+    public OutputStream getOutputStream(){
+        return out;
+    }
+
+    public static Thread threadRecive = null;
+    public static Thread threadSend = null;
 
 
     private class ThreadRecive extends Thread {

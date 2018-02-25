@@ -36,9 +36,6 @@ public class Client extends Thread{
         try {
             byte[] command = new byte[3];
             InputStream in = socket.getInputStream();
-            //for (int i = 0; i < 3; i++) {
-            //    command[i] = (byte) in.read();
-            //}
             in.read(command);
             if (command[0] == NEW_GAME) {
                 wantsToPlay = true;

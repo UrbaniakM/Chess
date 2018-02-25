@@ -7,6 +7,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.OutputStream;
+
 public class MainApp extends Application {
     public static Stage primaryStage;
     public static GameController gameController = new GameController();
@@ -16,8 +18,23 @@ public class MainApp extends Application {
     }
 
     private void close(){
-        GameController.threadRecive.interrupt();
-        GameController.threadSend.interrupt();
+        if(GameController.threadRecive != null){
+            GameController.threadRecive.interrupt();
+        }
+        if(GameController.threadSend != null){
+            GameController.threadSend.interrupt();
+        } else {
+            OutputStream out =  gameController.getOutputStream();
+            byte[] exitCommand = new byte[3];
+            exitCommand[0] = 4;
+            exitCommand[1] = 4;
+            try {
+                out.write(exitCommand);
+                out.close();
+            } catch(Throwable t){
+                //do nothing
+            }
+        }
     }
 
     @Override

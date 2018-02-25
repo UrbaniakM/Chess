@@ -50,7 +50,7 @@ public class Game extends Thread{
             command[1] = 1;
             outSecond.write(command);
 
-            while(true) {
+            while(!isInterrupted()) {
                 Move move;
                 if(inFirst.available()>0){
                     move = recive(inFirst);
