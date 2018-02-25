@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 public class Board {
     private Player.Color[][] state;
     private Semaphore mutex = new Semaphore(1);
+    private Player.Color winner = Player.Color.EMPTY;
 
     public Board(){
         state = new Player.Color[3][3];
@@ -15,6 +16,10 @@ public class Board {
         }
     }
 
+    public Player.Color getWinner(){
+        return winner;
+    }
+
     public Player.Color[][] getState() {
         return state;
     }
@@ -23,8 +28,22 @@ public class Board {
         return state[x][y];
     }
 
-    private void setState(int x, int y, Player.Color color){
+    private void setState(int x, int y, Player.Color color) {
         state[x][y] = color;
+        for (int iter = 0; iter < 3; iter++) {
+            if (state[iter][0] == state[iter][1] && state[iter][1] == state[iter][2] && state[iter][2] != Player.Color.EMPTY) {
+                winner = color;
+            }
+            if (state[0][iter] == state[1][iter] && state[1][iter] == state[2][iter] && state[2][iter] != Player.Color.EMPTY) {
+                winner = color;
+            }
+        }
+        if (state[0][0] == state[1][1] && state[1][1] == state[2][2] && state[2][2] != Player.Color.EMPTY) {
+            winner = color;
+        }
+        if (state[2][0] == state[1][1] && state[1][1] == state[0][2] && state[0][2] != Player.Color.EMPTY) {
+            winner = color;
+        }
     }
 
     public void doMove(Move move){

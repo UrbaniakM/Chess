@@ -1,5 +1,6 @@
 import jdk.internal.util.xml.impl.Input;
 
+import javax.xml.ws.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,21 +53,31 @@ public class Game extends Thread{
             while(true) {
                 Move move;
                 if(inFirst.available()>0){
-                    move = recive(inFirst); // TODO: if not null
+                    move = recive(inFirst);
                     send(move.command, outSecond);
                     if (move.hasWon) {
                         // TODO
                     } else if(move.end){
-                        // TODO
+                        clientFirst.close();
+                        Client client = new Client(clientSecond.getSocket());
+                        Server.removeClient(clientSecond);
+                        Server.addClient(client);
+                        client.start();
+                        break;
                     }
                 }
                 if(inSecond.available()>0){
-                    move = recive(inSecond);  // TODO: if not null
+                    move = recive(inSecond);
                     send(move.command, outFirst);
                     if (move.hasWon) {
                         // TODO
                     } else if(move.end){
-                        // TODO
+                        clientSecond.close();
+                        Client client = new Client(clientFirst.getSocket());
+                        Server.removeClient(clientFirst);
+                        Server.addClient(client);
+                        client.start();
+                        break;
                     }
                 }
             }

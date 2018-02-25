@@ -1,6 +1,7 @@
 package App;
 
 import GUI.BoardFX;
+import GUI.ExceptionAlert;
 import GUI.MainApp;
 import GUI.SignFX;
 import Logic.Board;
@@ -38,6 +39,10 @@ public class GameController {
 
     private BoardFX boardFX;
 
+    public Socket getOut(){
+        return server;
+    }
+
     public static BooleanProperty isPlayerTurn = new BooleanPropertyBase() {
         @Override
         public Object getBean() {
@@ -50,18 +55,26 @@ public class GameController {
         }
     };
 
-    private Thread threadRecive;
-    private Thread threadSend;
+    public static Thread threadRecive;
+    public static Thread threadSend;
 
 
-    private final Task taskRecive = new Task<Void>() {
+    private class ThreadRecive extends Thread {
         @Override
-        protected Void call() {
+        public void run() {
+            super.run();
             while (true) {
                 try {
                     byte[] command = new byte[3];
-                    for (int i = 0; i < 3; i++) {
-                        command[i] = (byte) in.read();
+                    int i = 0;
+                    while(!isInterrupted() && i < 3){
+                        if(in.available() > 0) {
+                            command[i] = (byte) in.read();
+                            i++;
+                        }
+                    }
+                    if(isInterrupted()){
+                        break;
                     }
                     if (command[0] == MOVE) {
                         int x = command[1];
@@ -79,8 +92,20 @@ public class GameController {
                         gameBoard.doMove(move);
                         boardFX.setFill(x, y, opponent);
                         isPlayerTurn.setValue(true);
+                        Platform.runLater( () -> {
+                            new ExceptionAlert("You lost", "blablabla").showAndWait(); // TODO dla testu, usun to
+                            boardFX.setDisable(true);
+                        });
                         break;
-                        //TODO: rematch / end / new game
+                    } else if(command[0] == EXIT) {
+                        if(command[1] == EXIT) { // means exit from another client
+                            // TODO
+                        } else { // means exit from server
+                            Platform.runLater( () -> {
+                                new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
+                                System.exit(100);
+                            });
+                        }
                     } else {
                         throw new IllegalArgumentException();
                     }
@@ -88,9 +113,8 @@ public class GameController {
                     e.printStackTrace();
                 }
             }
-            return null;
         }
-    };
+    }
 
     private class ThreadSend extends Thread{
         Board board;
@@ -115,11 +139,11 @@ public class GameController {
                         for (int y = 0; y < 3; y++) {
                             if (!states[x][y].equals(newStates[x][y]) && newStates[x][y].equals(clientPlayer.getColor())) {
                                 byte[] command = new byte[3];
-                                //if(!hasWon){
-                                command[0] = MOVE;
-                                //} else{
-                                //command[0] = DECLARE_WINNING;// TODO: check if not winner before sending move
-                                //}
+                                if(gameBoard.getWinner() == Player.Color.EMPTY){
+                                    command[0] = MOVE;
+                                } else{
+                                    command[0] = DECLARE_WINNING;
+                                }
                                 command[1] = (byte) x;
                                 command[2] = (byte) y;
                                 try {
@@ -130,6 +154,18 @@ public class GameController {
                                 }
                             }
                         }
+                    }
+                    if(isInterrupted()){
+                        try {
+                            byte[] command = new byte[3];
+                            command[0] = EXIT;
+                            command[1] = EXIT;
+                            out.write(command);
+                            close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        break;
                     }
                 }
         }
@@ -151,13 +187,14 @@ public class GameController {
                 MainApp.primaryStage.sizeToScene();
                 MainApp.primaryStage.show();
                 isPlayerTurn.setValue(command[1] == 0); // najpierw kolko, potem krzyzyk
-                threadRecive = new Thread(taskRecive);
-                threadRecive.setDaemon(true);
+                threadRecive = new ThreadRecive();
                 threadRecive.start();
                 threadSend = new ThreadSend(gameBoard);
                 threadSend.start();
             } else {
-                // TODO: else means EXIT from the other player before game started
+                // TODO: else means EXIT from the server before game started
+                new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
+                System.exit(100);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -180,7 +217,7 @@ public class GameController {
             in = server.getInputStream();
             out = server.getOutputStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            new ExceptionAlert("Server disconnected", "Playing isn't possible right now. Try again later.").showAndWait();
             System.exit(100);
         }
     }

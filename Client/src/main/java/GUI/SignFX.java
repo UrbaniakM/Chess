@@ -3,6 +3,7 @@ package GUI;
 
 import App.GameController;
 import Logic.Player;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.scene.layout.StackPane;
@@ -55,6 +56,10 @@ public class SignFX extends StackPane{
                 this.setFill(this.player.getColor());
                 this.isEmpty.setValue(false);
                 GameController.isPlayerTurn.setValue(false);
+                if(player.isWinner()){
+                        new ExceptionAlert("You won", "blablabla").showAndWait(); // TODO dla testu, usun to
+                        this.getParent().setDisable(true);
+                }
         });
     }
 

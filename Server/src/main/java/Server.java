@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -14,6 +15,28 @@ public class Server {
     private static Semaphore mutex = new Semaphore(1);
 
     public static void main(String[] args){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                mutex.acquireUninterruptibly();
+                int i = 0;
+                byte[] exitCommand = new byte[3];
+                exitCommand[0] = Client.EXIT;
+                try {
+                    while (i < clients.size()) {
+                        OutputStream out = clients.get(i).getSocket().getOutputStream();
+                        out.write(exitCommand);
+                        clients.get(i).close();
+                        i++;
+                    }
+                }  catch (Throwable e){
+                    // donothing
+                }
+                serverSocket = null;
+                mutex.release();
+            }
+        });
+
         Server server = new Server();
         server.run();
     }
@@ -34,11 +57,15 @@ public class Server {
     }
 
     public static void addClient(Client client){
+        mutex.acquireUninterruptibly();
         clients.add(client);
+        mutex.release();
     }
 
     public static void removeClient(Client client){
+        mutex.acquireUninterruptibly();
         clients.remove(client);
+        mutex.release();
     }
 
     public static void newGame(Client clientFirst, Client clientSecond){
@@ -77,7 +104,7 @@ public class Server {
                 }
             } catch (InterruptedException ex){
                 ex.printStackTrace();
-                System.out.println("Mutex error");
+                System.out.println("Interrupted thread");
             } finally {
                 mutex.release();
             }
@@ -89,22 +116,19 @@ public class Server {
 
         public void run(){
             System.out.println("Start handling new connections...");
-            while(true){
+            while(serverSocket != null){
                 try{
                     clientSocket = serverSocket.accept();
                     clientSocket.setReceiveBufferSize(3);
                     clientSocket.setSendBufferSize(3);
-                    mutex.acquire();
-                    System.out.println("Connection Established, client IP: " + clientSocket.getInetAddress());
+                    mutex.acquireUninterruptibly();
+                    System.out.println("Connection established, client IP: " + clientSocket.getInetAddress() + ":" + clientSocket.getPort());
                     Client client = new Client(clientSocket);
                     client.start();
                     clients.add(client);
                 } catch(IOException ex){
                     ex.printStackTrace();
                     System.out.println("Connection Error");
-                } catch (InterruptedException ex){
-                    ex.printStackTrace();
-                    System.out.println("Mutex error");
                 } finally {
                     mutex.release();
                 }

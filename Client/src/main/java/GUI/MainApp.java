@@ -11,9 +11,18 @@ public class MainApp extends Application {
     public static Stage primaryStage;
     public static GameController gameController = new GameController();
 
-
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void close(){
+        GameController.threadRecive.interrupt();
+        GameController.threadSend.interrupt();
+    }
+
+    @Override
+    public void stop(){
+        close();
     }
 
     @Override
@@ -23,7 +32,12 @@ public class MainApp extends Application {
         primaryStage.setResizable(false);
         primaryStage.sizeToScene();
         primaryStage.show();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                close();
+            }
+        });
     }
-
-
 }

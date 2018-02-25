@@ -20,7 +20,11 @@ public class Client extends Thread{
 
     public void close(){
         try {
-            socket.close();
+            System.out.println("Connection closed, client IP: " +
+                    socket.getInetAddress() + ":" + socket.getPort());
+            if(socket != null){
+                socket.close();
+            }
             Server.removeClient(this);
         } catch (IOException ex){
             System.out.println("Connection Error"); // TODO: disconnect client

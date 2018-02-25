@@ -32,7 +32,11 @@ public class Player {
     }
 
     public void doMove(int x, int y){
-        Move move = new Move(x,y,getColor());
+        Move move = new Move(x,y,color);
         board.doMove(move);
+    }
+
+    public boolean isWinner(){
+        return board.getWinner() == color;
     }
 }
