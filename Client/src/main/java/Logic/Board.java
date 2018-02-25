@@ -4,7 +4,6 @@ import java.util.concurrent.Semaphore;
 
 public class Board {
     private Player.Color[][] state;
-    private Semaphore mutex = new Semaphore(1);
     private Player.Color winner = Player.Color.EMPTY;
 
     public Board(){
@@ -16,8 +15,18 @@ public class Board {
         }
     }
 
-    public Player.Color getWinner(){
+    public synchronized Player.Color getWinner(){
         return winner;
+    }
+
+    public void clearBoard(){
+        for(int x = 0; x < 3; x++){
+            for(int y = 0; y < 3; y++){
+                state[x][y] = Player.Color.EMPTY;
+            }
+        }
+
+        winner = Player.Color.EMPTY;
     }
 
     public Player.Color[][] getState() {
@@ -28,7 +37,7 @@ public class Board {
         return state[x][y];
     }
 
-    private void setState(int x, int y, Player.Color color) {
+    private synchronized void setState(int x, int y, Player.Color color) {
         state[x][y] = color;
         for (int iter = 0; iter < 3; iter++) {
             if (state[iter][0] == state[iter][1] && state[iter][1] == state[iter][2] && state[iter][2] != Player.Color.EMPTY) {
@@ -46,8 +55,7 @@ public class Board {
         }
     }
 
-    public void doMove(Move move){
-        mutex.acquireUninterruptibly();
+    public synchronized void doMove(Move move){
         int x = move.getX();
         int y = move.getY();
         if(getState(x,y) == Player.Color.EMPTY){
@@ -55,6 +63,5 @@ public class Board {
         } else { // TODO: invalid move - SEND INFO TO SERVER OR SOMETHING IN 'PLAYER' class
 
         }
-        mutex.release();
     }
 }

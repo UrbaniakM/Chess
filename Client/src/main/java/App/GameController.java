@@ -22,9 +22,9 @@ import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
 public class GameController {
-    private Socket server = null;
-    private InputStream in = null;
-    private OutputStream out = null;
+    private static Socket server = null;
+    private static InputStream in = null;
+    private static OutputStream out = null;
 
     private static final byte MOVE = 0;
     private static final byte DECLARE_WINNING = 1;
@@ -100,9 +100,9 @@ public class GameController {
                         Move move = new Move(x, y, opponent);
                         gameBoard.doMove(move);
                         boardFX.setFill(x, y, opponent);
-                        isPlayerTurn.setValue(true);
+                        isPlayerTurn.setValue(false);
                         Platform.runLater( () -> {
-                            new ExceptionAlert("You lost", "blablabla").showAndWait(); // TODO dla testu, usun to
+                            new ExceptionAlert("You lost", "blablabla").show(); // TODO dla testu, usun to
                             boardFX.setDisable(true);
                         });
                         break;
@@ -143,12 +143,12 @@ public class GameController {
                     }
                 }
                 while (true) {
-                    Player.Color[][] newStates = gameBoard.getState();
+                    Player.Color[][] newStates = board.getState();
                     for (int x = 0; x < 3; x++) {
                         for (int y = 0; y < 3; y++) {
                             if (!states[x][y].equals(newStates[x][y]) && newStates[x][y].equals(clientPlayer.getColor())) {
                                 byte[] command = new byte[3];
-                                if(gameBoard.getWinner() == Player.Color.EMPTY){
+                                if(board.getWinner() == Player.Color.EMPTY){
                                     command[0] = MOVE;
                                 } else{
                                     command[0] = DECLARE_WINNING;
@@ -157,7 +157,7 @@ public class GameController {
                                 command[2] = (byte) y;
                                 try {
                                     out.write(command);
-                                    states[x][y] = gameBoard.getState(x, y);
+                                    states[x][y] = board.getState(x, y);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -180,7 +180,7 @@ public class GameController {
         }
     }
 
-    public void startNewGame(byte typeOfCommand){
+    public static void startNewGame(byte typeOfCommand){
         try {
             byte[] command = new byte[3];
             command[0] = NEW_GAME;

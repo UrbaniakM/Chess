@@ -51,13 +51,14 @@ public class SignFX extends StackPane{
         this.disableProperty().bind(GameController.isPlayerTurn.not()
             .or(isEmpty.not())
         );
+
         this.setOnMouseClicked(event -> {
                 this.player.doMove(this.x, this.y);
                 this.setFill(this.player.getColor());
                 this.isEmpty.setValue(false);
                 GameController.isPlayerTurn.setValue(false);
                 if(player.isWinner()){
-                        new ExceptionAlert("You won", "blablabla").showAndWait(); // TODO dla testu, usun to
+                        new ExceptionAlert("You won", "blablabla").show(); // TODO dla testu, usun to
                         this.getParent().setDisable(true);
                 }
         });
