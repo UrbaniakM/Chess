@@ -58,7 +58,7 @@ public class SignFX extends StackPane{
                 this.isEmpty.setValue(false);
                 GameController.isPlayerTurn.setValue(false);
                 if(player.isWinner()){
-                        new ExceptionAlert("You won", "blablabla").show(); // TODO dla testu, usun to
+                        new EndGameDialog("won");
                         this.getParent().setDisable(true);
                 }
         });

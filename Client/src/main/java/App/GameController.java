@@ -1,12 +1,10 @@
 package App;
 
-import GUI.BoardFX;
-import GUI.ExceptionAlert;
-import GUI.MainApp;
-import GUI.SignFX;
+import GUI.*;
 import Logic.Board;
 import Logic.Move;
 import Logic.Player;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -21,7 +19,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
-public class GameController {
+public class GameController extends Application {
     private static Socket server = null;
     private static InputStream in = null;
     private static OutputStream out = null;
@@ -34,10 +32,57 @@ public class GameController {
     private static final byte NEW_OPPONENT = 5;
     private static final byte WAIT = 6;
 
-    private Board gameBoard;
-    private Player clientPlayer;
+    private static Board gameBoard;
+    private static Player clientPlayer;
 
-    private BoardFX boardFX;
+    private static BoardFX boardFX;
+
+    public static Stage primaryStage;
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    private void closeHook(){
+        if(GameController.threadRecive != null){
+            GameController.threadRecive.interrupt();
+        }
+        if(GameController.threadSend != null){
+            GameController.threadSend.interrupt();
+        } else {
+            OutputStream out =  getOutputStream();
+            byte[] exitCommand = new byte[3];
+            exitCommand[0] = 4;
+            exitCommand[1] = 4;
+            try {
+                out.write(exitCommand);
+                out.close();
+            } catch(Throwable t){
+                //do nothing
+            }
+        }
+    }
+
+    @Override
+    public void stop(){
+        closeHook();
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        this.primaryStage = primaryStage;
+        this.primaryStage.setScene(new Scene(new SearchGameButton()));
+        this.primaryStage.setResizable(false);
+        this.primaryStage.sizeToScene();
+        this.primaryStage.show();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                closeHook();
+            }
+        });
+    }
 
     public static BooleanProperty isPlayerTurn = new BooleanPropertyBase() {
         @Override
@@ -51,7 +96,7 @@ public class GameController {
         }
     };
 
-    public OutputStream getOutputStream(){
+    public static OutputStream getOutputStream(){
         return out;
     }
 
@@ -59,7 +104,7 @@ public class GameController {
     public static Thread threadSend = null;
 
 
-    private class ThreadRecive extends Thread {
+    private static class ThreadRecive extends Thread {
         @Override
         public void run() {
             super.run();
@@ -80,9 +125,10 @@ public class GameController {
                         Platform.runLater(() -> {
                             clientPlayer = (command[1] == 0) ? new Player(Player.Color.O, gameBoard) : new Player(Player.Color.X, gameBoard);
                             boardFX = new BoardFX(clientPlayer);
-                            MainApp.primaryStage.setScene(new Scene(boardFX, 460, 460));
-                            MainApp.primaryStage.sizeToScene();
-                            MainApp.primaryStage.show();
+                            boardFX.setDisable(false);
+                            primaryStage.setScene(new Scene(boardFX, 460, 460));
+                            primaryStage.sizeToScene();
+                            primaryStage.show();
                             isPlayerTurn.setValue(command[1] == 0); // najpierw kolko, potem krzyzyk
                         });
                     }  else if (command[0] == MOVE) {
@@ -102,13 +148,16 @@ public class GameController {
                         boardFX.setFill(x, y, opponent);
                         isPlayerTurn.setValue(false);
                         Platform.runLater( () -> {
-                            new ExceptionAlert("You lost", "blablabla").show(); // TODO dla testu, usun to
+                            new EndGameDialog("lost");
                             boardFX.setDisable(true);
                         });
                         break;
                     } else if(command[0] == EXIT) {
                         if(command[1] == EXIT) { // means exit from another client
-                            // TODO
+                            Platform.runLater( () -> {
+                                new EndGameDialog("exit");
+                                boardFX.setDisable(true);
+                            });
                         } else { // means exit from server
                             Platform.runLater( () -> {
                                 new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
@@ -125,7 +174,7 @@ public class GameController {
         }
     }
 
-    private class ThreadSend extends Thread{
+    private static class ThreadSend extends Thread{
         Board board;
 
         public ThreadSend(Board board){
@@ -190,7 +239,7 @@ public class GameController {
         }
     }
 
-    public void close(){
+    public static void close(){
         try{
             server.close();
         } catch (IOException e) {
