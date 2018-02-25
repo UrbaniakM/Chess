@@ -39,10 +39,6 @@ public class GameController {
 
     private BoardFX boardFX;
 
-    public Socket getOut(){
-        return server;
-    }
-
     public static BooleanProperty isPlayerTurn = new BooleanPropertyBase() {
         @Override
         public Object getBean() {
@@ -80,7 +76,16 @@ public class GameController {
                     if(isInterrupted()){
                         break;
                     }
-                    if (command[0] == MOVE) {
+                    if(command[0] == NEW_GAME) {
+                        Platform.runLater(() -> {
+                            clientPlayer = (command[1] == 0) ? new Player(Player.Color.O, gameBoard) : new Player(Player.Color.X, gameBoard);
+                            boardFX = new BoardFX(clientPlayer);
+                            MainApp.primaryStage.setScene(new Scene(boardFX, 460, 460));
+                            MainApp.primaryStage.sizeToScene();
+                            MainApp.primaryStage.show();
+                            isPlayerTurn.setValue(command[1] == 0); // najpierw kolko, potem krzyzyk
+                        });
+                    }  else if (command[0] == MOVE) {
                         int x = command[1];
                         int y = command[2];
                         final Player.Color opponent = clientPlayer.getOpponent();
@@ -175,31 +180,11 @@ public class GameController {
         }
     }
 
-    public void startNewGame(){
+    public void startNewGame(byte typeOfCommand){
         try {
             byte[] command = new byte[3];
             command[0] = NEW_GAME;
             out.write(command);
-            for (int i = 0; i < 3; i++) {
-                command[i] = (byte) in.read();
-            }
-            if(command[0] == NEW_GAME) {
-                gameBoard = new Board();
-                clientPlayer = (command[1] == 0) ? new Player(Player.Color.O, gameBoard) : new Player(Player.Color.X, gameBoard);
-                boardFX = new BoardFX(clientPlayer);
-                MainApp.primaryStage.setScene(new Scene(boardFX, 460, 460));
-                MainApp.primaryStage.sizeToScene();
-                MainApp.primaryStage.show();
-                isPlayerTurn.setValue(command[1] == 0); // najpierw kolko, potem krzyzyk
-                threadRecive = new ThreadRecive();
-                threadRecive.start();
-                threadSend = new ThreadSend(gameBoard);
-                threadSend.start();
-            } else {
-                // TODO: else means EXIT from the server before game started
-                new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
-                System.exit(100);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,6 +205,11 @@ public class GameController {
             server.setSendBufferSize(3);
             in = server.getInputStream();
             out = server.getOutputStream();
+            gameBoard = new Board();
+            threadRecive = new ThreadRecive();
+            threadRecive.start();
+            threadSend = new ThreadSend(gameBoard);
+            threadSend.start();
         } catch (IOException e) {
             new ExceptionAlert("Server disconnected", "Playing isn't possible right now. Try again later.").showAndWait();
             System.exit(100);

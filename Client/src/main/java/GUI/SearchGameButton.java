@@ -8,7 +8,7 @@ public class SearchGameButton extends Button {
     public SearchGameButton(){
         super("Search for new game");
         this.setOnMouseClicked(event -> {
-            MainApp.gameController.startNewGame();
+            MainApp.gameController.startNewGame((byte)2);
             // TODO: pop alert informing about searching new game
         });
     }

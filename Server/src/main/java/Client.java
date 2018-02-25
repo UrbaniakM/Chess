@@ -24,6 +24,7 @@ public class Client extends Thread{
                     socket.getInetAddress() + ":" + socket.getPort());
             if(socket != null){
                 socket.close();
+                socket = null;
             }
             Server.removeClient(this);
         } catch (IOException ex){
@@ -36,14 +37,16 @@ public class Client extends Thread{
         try {
             byte[] command = new byte[3];
             InputStream in = socket.getInputStream();
-            in.read(command);
-            if (command[0] == NEW_GAME) {
-                wantsToPlay = true;
-            } else if (command[0] == EXIT) {
-                close();
-            } else {
-                System.out.println("Connection Error"); // TODO: disconnect client
-                throw new IllegalArgumentException();
+            if(socket != null) {
+                in.read(command);
+                if (command[0] == NEW_GAME) {
+                    wantsToPlay = true;
+                } else if (command[0] == EXIT) {
+                    close();
+                } else {
+                    System.out.println("Connection Error"); // TODO: disconnect client
+                    throw new IllegalArgumentException();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
