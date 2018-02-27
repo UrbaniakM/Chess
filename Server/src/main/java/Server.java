@@ -33,11 +33,12 @@ public class Server {
                 byte[] exitCommand = new byte[3];
                 exitCommand[0] = Client.EXIT;
                 try {
-                    while (i < clients.size()) {
+                    while (i <= clients.size()) {
                         OutputStream out = clients.get(i).getSocket().getOutputStream();
                         out.write(exitCommand);
                         clients.get(i).close();
                         i++;
+                        System.out.println(clients.size());
                     }
                 }  catch (Throwable e){
                     // do nothing
@@ -56,14 +57,11 @@ public class Server {
             serverSocket = new ServerSocket(3000);
             clients = new ArrayList<>();
             games = new ArrayList<>();
+            System.out.println("Server on address: " + serverSocket.getInetAddress() + ":3000");
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(100);
         }
-    }
-
-    public static List<Client> getClients(){
-        return clients;
     }
 
     public static void addClient(Client client){
@@ -87,7 +85,7 @@ public class Server {
     }
 
     public void run(){
-        System.out.println("Server is running...");
+        System.out.println("Server is running ...");
         new Thread(new HandleNewClients()).start();
         while(true){
             try {
@@ -113,8 +111,8 @@ public class Server {
                     newGame(first, second);
                 }
             } catch (InterruptedException ex){
-                ex.printStackTrace();
-                System.out.println("Interrupted thread");
+                mutex.release();
+                break;
             } finally {
                 mutex.release();
             }
@@ -137,8 +135,7 @@ public class Server {
                     client.start();
                     clients.add(client);
                 } catch(IOException ex){
-                    ex.printStackTrace();
-                    System.out.println("Connection Error");
+                    System.out.println("Connection error, couldn't establish connection");
                 } finally {
                     mutex.release();
                 }

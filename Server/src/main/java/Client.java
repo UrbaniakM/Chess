@@ -7,6 +7,7 @@ public class Client extends Thread{
 
     static final byte NEW_GAME = 2;
     static final byte EXIT = 4;
+    static final byte REMATCH = 3;
 
     public boolean wantsToPlay = false;
 
@@ -28,7 +29,7 @@ public class Client extends Thread{
             }
             Server.removeClient(this);
         } catch (IOException ex){
-            System.out.println("Connection Error"); // TODO: disconnect client
+            System.out.println("Error with closing client, client IP: " + socket.getInetAddress() + ":" + socket.getPort());
         }
     }
 
@@ -39,11 +40,12 @@ public class Client extends Thread{
             InputStream in = socket.getInputStream();
             if(socket != null) {
                 in.read(command);
-                if (command[0] == NEW_GAME) {
+                if (command[0] == NEW_GAME || command[0] == REMATCH) {
                     wantsToPlay = true;
                 } else if (command[0] == EXIT) {
                     close();
                 } else {
+                    System.out.println(command[0]);
                     System.out.println("Connection Error"); // TODO: disconnect client
                     throw new IllegalArgumentException();
                 }

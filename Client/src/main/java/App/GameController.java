@@ -12,6 +12,7 @@ import javafx.beans.value.WritableBooleanValue;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import sun.applet.Main;
 
@@ -26,11 +27,9 @@ public class GameController extends Application {
 
     private static final byte MOVE = 0;
     private static final byte DECLARE_WINNING = 1;
-    private static final byte NEW_GAME = 2;
-    private static final byte REMATCH = 3;
-    private static final byte EXIT = 4;
-    private static final byte NEW_OPPONENT = 5;
-    private static final byte WAIT = 6;
+    public static final byte NEW_GAME = 2;
+    public static final byte REMATCH = 3;
+    public static final byte EXIT = 4;
 
     private static Board gameBoard;
     private static Player clientPlayer;
@@ -38,6 +37,7 @@ public class GameController extends Application {
     private static BoardFX boardFX;
 
     public static Stage primaryStage;
+    public static Alert endDialogAlert = null;
 
     public static void main(String[] args) {
         launch(args);
@@ -123,6 +123,7 @@ public class GameController extends Application {
                     }
                     if(command[0] == NEW_GAME) {
                         Platform.runLater(() -> {
+                            gameBoard.clearBoard();
                             clientPlayer = (command[1] == 0) ? new Player(Player.Color.O, gameBoard) : new Player(Player.Color.X, gameBoard);
                             boardFX = new BoardFX(clientPlayer);
                             boardFX.setDisable(false);
@@ -151,7 +152,6 @@ public class GameController extends Application {
                             new EndGameDialog("lost");
                             boardFX.setDisable(true);
                         });
-                        break;
                     } else if(command[0] == EXIT) {
                         if(command[1] == EXIT) { // means exit from another client
                             Platform.runLater( () -> {
@@ -164,6 +164,8 @@ public class GameController extends Application {
                                 System.exit(100);
                             });
                         }
+                    } else if(command[0] == REMATCH) {
+                        //donothing
                     } else {
                         throw new IllegalArgumentException();
                     }
@@ -229,10 +231,11 @@ public class GameController extends Application {
         }
     }
 
-    public static void startNewGame(byte typeOfCommand){
+    public static void sendCommand(byte typeOfCommand){
         try {
             byte[] command = new byte[3];
-            command[0] = NEW_GAME;
+            command[0] = typeOfCommand;
+            command[1] = EXIT;
             out.write(command);
         } catch (IOException e) {
             e.printStackTrace();
@@ -249,7 +252,8 @@ public class GameController extends Application {
 
     public GameController(){
         try{
-            server = new Socket("192.168.1.105",3000);
+            //server = new Socket("192.168.1.105",3000);
+            server = new Socket("0.0.0.0",3000);
             server.setReceiveBufferSize(3);
             server.setSendBufferSize(3);
             in = server.getInputStream();

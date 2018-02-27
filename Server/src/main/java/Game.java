@@ -1,3 +1,4 @@
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import jdk.internal.util.xml.impl.Input;
 
 import javax.xml.ws.Service;
@@ -41,22 +42,42 @@ public class Game extends Thread{
 
     @Override
     public void run(){
-        byte[] command = new byte[3];
-        command[0] = NEW_GAME;
-        command[1] = 0;
-        command[2] = 0;
+        boolean rematchFirst = false;
+        boolean rematchSecond = false;
+        boolean sendFirst = false;
+        boolean sendSecond = false;
+        byte O = 0;
+        byte X = 1;
+
         try {
+            byte[] command = new byte[3];
+            command[0] = NEW_GAME;
+            command[1] = O;
+            command[2] = 0;
             outFirst.write(command);
-            command[1] = 1;
+            command[1] = X;
             outSecond.write(command);
 
             while(!isInterrupted()) {
-                Move move;
+                Move move = null;
                 if(inFirst.available()>0){
                     move = recive(inFirst);
+                    if(move.wrong){
+                        Client client = new Client(clientSecond.getSocket());
+                        Server.removeClient(clientSecond);
+                        Server.addClient(client);
+                        client.start();
+                        client = new Client(clientFirst.getSocket());
+                        Server.removeClient(clientFirst);
+                        Server.addClient(client);
+                        client.wantsToPlay = true;
+                        client.start();
+                        break;
+                    }
                     send(move.command, outSecond);
-                    if (move.hasWon) {
-                        // TODO
+                    if (move.rematch) {
+                        sendFirst = true;
+                        rematchFirst = true;
                     } else if(move.end){
                         clientFirst.close();
                         Client client = new Client(clientSecond.getSocket());
@@ -68,10 +89,24 @@ public class Game extends Thread{
                 }
                 if(inSecond.available()>0){
                     move = recive(inSecond);
+                    if(move.wrong){
+                        Client client = new Client(clientSecond.getSocket());
+                        Server.removeClient(clientSecond);
+                        Server.addClient(client);
+                        client.wantsToPlay = true;
+                        client.start();
+                        client = new Client(clientFirst.getSocket());
+                        Server.removeClient(clientFirst);
+                        Server.addClient(client);
+                        client.start();
+                        break;
+                    }
                     send(move.command, outFirst);
-                    if (move.hasWon) {
+                    if(move.rematch) {
+                        sendSecond = true;
+                        rematchSecond = true;
                         // TODO
-                    } else if(move.end){
+                    }else if(move.end){
                         clientSecond.close();
                         Client client = new Client(clientFirst.getSocket());
                         Server.removeClient(clientFirst);
@@ -80,10 +115,54 @@ public class Game extends Thread{
                         break;
                     }
                 }
+                if(move != null && move.hasWon) {
+                    if (O == 0) {
+                        O = 1;
+                        X = 0;
+                    } else {
+                        X = 1;
+                        O = 0;
+                    }
+                }
+                if(sendFirst == sendSecond && sendFirst == true){
+                    if(rematchFirst == rematchSecond){
+                        command[0] = NEW_GAME;
+                        command[1] = O;
+                        command[2] = 0;
+                        outFirst.write(command);
+                        command[1] = X;
+                        outSecond.write(command);
+                        sendFirst = false;
+                        sendSecond = false;
+                        rematchFirst = false;
+                        rematchSecond = false;
+                    }
+                }
+            }
+            if(isInterrupted()){
+                try {
+                    byte[] exitCommand = new byte[3];
+                    exitCommand[0] = EXIT;
+                    outFirst.write(exitCommand);
+                    outSecond.write(exitCommand);
+                    Server.removeClient(clientFirst);
+                    Server.removeClient(clientSecond);
+                } catch (Throwable t){
+                    // do nothing
+                }
             }
         } catch (IOException ex){
-            ex.printStackTrace();
-            System.out.println("Connection Error"); // TODO: disconnect client
+            try {
+                byte[] exitCommand = new byte[3];
+                exitCommand[0] = EXIT;
+                outFirst.write(exitCommand);
+                outSecond.write(exitCommand);
+                interrupt();
+            } catch (Throwable t){
+                // do nothing
+            }
+            //ex.printStackTrace();
+            //System.out.println("Connection Error");
         }
     }
 
@@ -113,12 +192,16 @@ public class Game extends Thread{
     private class Move{
         public boolean hasWon;
         public boolean end;
+        public boolean rematch;
+        public boolean wrong;
         public byte[] command;
 
         public Move(byte[] command){
             this.command = command;
             hasWon = (command[0] == DECLARE_WINNING);
             end = (command[0] == EXIT);
+            rematch = (command[0] == REMATCH);
+            wrong = (command[0] == NEW_GAME);
         }
     }
 }
