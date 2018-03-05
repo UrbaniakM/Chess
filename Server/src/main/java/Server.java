@@ -3,9 +3,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 public class Server {
@@ -13,16 +10,20 @@ public class Server {
     private static volatile ArrayList<Client> clients = null;
     private static volatile ArrayList<Game> games = null;
     private static Semaphore mutex = new Semaphore(1);
+    private static Thread newClientsThread = null;
 
     public static void main(String[] args){
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                if(newClientsThread != null){
+                    newClientsThread.interrupt();
+                }
                 int i = 0;
                 try {
                     while (i < games.size()) {
                         games.get(i).interrupt();
-                        games.get(i).join();
+                        //games.get(i).join();
                         i++;
                     }
                 } catch (Throwable e){
@@ -38,7 +39,6 @@ public class Server {
                         out.write(exitCommand);
                         clients.get(i).close();
                         i++;
-                        System.out.println(clients.size());
                     }
                 }  catch (Throwable e){
                     // do nothing
@@ -77,16 +77,18 @@ public class Server {
     }
 
     public static void newGame(Client clientFirst, Client clientSecond){
+        //mutex.acquireUninterruptibly();
         Game game = new Game(clientFirst, clientSecond);
         clientFirst.wantsToPlay = false;
         clientSecond.wantsToPlay = false;
         games.add(game);
         game.start();
+        //mutex.release();
     }
 
     public void run(){
         System.out.println("Server is running ...");
-        new Thread(new HandleNewClients()).start();
+        newClientsThread = new HandleNewClients(); newClientsThread.start();
         while(true){
             try {
                 Client first = null;
@@ -94,7 +96,8 @@ public class Server {
                 int i = 0;
                 mutex.acquire();
                 while (i < clients.size()) {
-                    if (clients.get(i).wantsToPlay) {
+                    Client currentClient = clients.get(i);
+                    if (currentClient.wantsToPlay){// && currentClient != first) {
                         first = clients.get(i);
                         i++;
                         break;
@@ -106,6 +109,7 @@ public class Server {
                         second = clients.get(i);
                         break;
                     }
+                    i++;
                 }
                 if (second != null) {
                     newGame(first, second);
@@ -119,12 +123,12 @@ public class Server {
         }
     }
 
-    private class HandleNewClients implements Runnable {
+    private class HandleNewClients extends Thread {
         private Socket clientSocket = null;
 
         public void run(){
             System.out.println("Start handling new connections...");
-            while(serverSocket != null){
+            while(serverSocket != null && !isInterrupted()){
                 try{
                     clientSocket = serverSocket.accept();
                     clientSocket.setReceiveBufferSize(3);

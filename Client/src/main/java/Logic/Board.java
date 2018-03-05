@@ -5,6 +5,7 @@ import java.util.concurrent.Semaphore;
 public class Board {
     private Player.Color[][] state;
     private Player.Color winner = Player.Color.EMPTY;
+    private int numberOfEmptyField;
 
     public Board(){
         state = new Player.Color[3][3];
@@ -13,6 +14,7 @@ public class Board {
                 state[x][y] = Player.Color.EMPTY;
             }
         }
+        numberOfEmptyField = 9;
     }
 
     public synchronized Player.Color getWinner(){
@@ -37,8 +39,13 @@ public class Board {
         return state[x][y];
     }
 
+    public boolean isDraw() {
+        return numberOfEmptyField == 0 && getWinner() == Player.Color.EMPTY;
+    }
+
     private synchronized void setState(int x, int y, Player.Color color) {
         state[x][y] = color;
+        numberOfEmptyField--;
         for (int iter = 0; iter < 3; iter++) {
             if (state[iter][0] == state[iter][1] && state[iter][1] == state[iter][2] && state[iter][2] != Player.Color.EMPTY) {
                 winner = color;

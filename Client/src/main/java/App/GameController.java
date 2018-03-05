@@ -167,10 +167,13 @@ public class GameController extends Application {
                     } else if(command[0] == REMATCH) {
                         //donothing
                     } else {
-                        throw new IllegalArgumentException();
+                        throw new IllegalArgumentException(); // w praktyce nigdy nie zachodzi - musialby byc sygnal wysylany z zewnatrz
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Platform.runLater( () -> {
+                        new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
+                        System.exit(100);
+                    });
                 }
             }
         }
@@ -210,7 +213,10 @@ public class GameController extends Application {
                                     out.write(command);
                                     states[x][y] = board.getState(x, y);
                                 } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Platform.runLater( () -> {
+                                        new ExceptionAlert("Server disconnected", "Playing is no longer possible. Try again later.").showAndWait();
+                                        System.exit(100);
+                                    });
                                 }
                             }
                         }

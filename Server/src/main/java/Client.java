@@ -29,7 +29,7 @@ public class Client extends Thread{
             }
             Server.removeClient(this);
         } catch (IOException ex){
-            System.out.println("Error with closing client, client IP: " + socket.getInetAddress() + ":" + socket.getPort());
+            System.out.println("Error with closing client, client IP: " + socket.getInetAddress() + ":" + socket.getPort() + ", client already disconnected");
         }
     }
 
@@ -45,13 +45,13 @@ public class Client extends Thread{
                 } else if (command[0] == EXIT) {
                     close();
                 } else {
-                    System.out.println(command[0]);
-                    System.out.println("Connection Error"); // TODO: disconnect client
+                    System.out.println("Connection Error");
                     throw new IllegalArgumentException();
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection error with client: " + socket.getInetAddress() + ":" + socket.getPort() + ", trying to close connection.");
+            close();
         }
     }
 }

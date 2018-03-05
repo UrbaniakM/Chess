@@ -21,7 +21,7 @@ public class EndGameDialog extends Alert { // TODO
         getButtonTypes().add(buttonNewGame);
         getButtonTypes().add(buttonRematch);
         getButtonTypes().add(buttonExit);
-        if(type.equals("won")) {
+        if(type.equals("won")) {  // TODO: + DRAW
             setHeaderText("You have won with your current opponent");
         } else if(type.equals("lost")){
             this.setHeaderText("You have lost with your current opponent");
